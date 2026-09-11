@@ -35,6 +35,11 @@ let pageStatsCache: Record<number, PageStatistics> | null = null;
 let wordOccurrencesCache: Record<string, WordOccurrenceResult> | null = null;
 const wordTranslationCache: Record<string, WordTranslationResult> = {};
 
+const getBasePath = (): string => {
+  const base = (import.meta as any).env?.BASE_URL || '/';
+  return base.endsWith('/') ? base : base + '/';
+};
+
 export class QuranDataService {
   /**
    * Determine Surah for a given Mushaf page number (1 to 559)
@@ -58,7 +63,7 @@ export class QuranDataService {
   static getPageImagePath(pageNumber: number): string {
     const clamped = Math.max(1, Math.min(559, pageNumber));
     const pStr = String(clamped).padStart(3, '0');
-    return `/pages/page_${pStr}.jpg`;
+    return `${getBasePath()}pages/page_${pStr}.jpg`;
   }
 
   /**
@@ -72,7 +77,7 @@ export class QuranDataService {
 
     const pStr = String(clamped).padStart(3, '0');
     try {
-      const res = await fetch(`/data/pages/page_${pStr}.json`);
+      const res = await fetch(`${getBasePath()}data/pages/page_${pStr}.json`);
       if (!res.ok) throw new Error(`Failed to load page ${clamped}`);
       const data: QuranPageData = await res.json();
       pagesCache[clamped] = data;
@@ -101,7 +106,7 @@ export class QuranDataService {
 
     if (!pageStatsCache) {
       try {
-        const res = await fetch('/data/pageStatistics.json');
+        const res = await fetch(`${getBasePath()}data/pageStatistics.json`);
         if (res.ok) {
           pageStatsCache = await res.json();
         }
@@ -145,7 +150,7 @@ export class QuranDataService {
 
     if (!wordOccurrencesCache) {
       try {
-        const res = await fetch('/data/wordOccurrences.json');
+        const res = await fetch(`${getBasePath()}data/wordOccurrences.json`);
         if (res.ok) {
           wordOccurrencesCache = await res.json();
         }

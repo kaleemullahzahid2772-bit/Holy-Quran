@@ -2,6 +2,7 @@ import React from 'react';
 import { BarChart2 } from 'lucide-react';
 import { QuranPageData, QuranWordData, Surah, Juz } from '../types/quran';
 import { QuranLine } from './QuranLine';
+import { QuranIlluminatedPage } from './QuranIlluminatedPage';
 
 interface QuranPageProps {
   pageData: QuranPageData;
@@ -22,11 +23,26 @@ export const QuranPage: React.FC<QuranPageProps> = React.memo(({
   selectedWordId,
   onOpenPageDetails,
 }) => {
+  // If page 2 (Surah Al-Fatiha) or page 3 (Surah Al-Baqarah 1-5), render authentic illuminated floral page
+  if (pageNumber === 2 || pageNumber === 3) {
+    return (
+      <QuranIlluminatedPage
+        pageData={pageData}
+        pageNumber={pageNumber as 2 | 3}
+        surah={surah}
+        juz={juz}
+        onSelectWord={onSelectWord}
+        selectedWordId={selectedWordId}
+        onOpenPageDetails={onOpenPageDetails}
+      />
+    );
+  }
+
   // Convert number to Eastern Arabic numerals (e.g. 4 -> ۴)
   const pageNumberArabic = pageNumber.toLocaleString('ar-EG');
 
   return (
-    <div className="w-full max-w-[760px] mx-auto my-2 p-1.5 sm:p-3 md:p-4 bg-[#fdfbf7] dark:bg-emerald-950/80 rounded-2xl shadow-xl border border-gold-400/40 select-none animate-fade-in box-border">
+    <div className="w-full max-w-[820px] mx-auto my-2 p-1.5 sm:p-3 md:p-4 bg-[#fdfbf7] dark:bg-emerald-950/80 rounded-2xl shadow-xl border border-gold-400/40 select-none animate-fade-in box-border">
       {/* Outer Traditional Islamic Double Border */}
       <div className="p-1.5 sm:p-2.5 md:p-3 rounded-xl border-2 border-gold-500/60 bg-[#fffefc] dark:bg-[#031d16]/90 shadow-inner box-border overflow-hidden">
         {/* Inner Ornamental Border */}
@@ -51,7 +67,7 @@ export const QuranPage: React.FC<QuranPageProps> = React.memo(({
           </div>
 
           {/* 16-Line Reading Grid */}
-          <div className="flex flex-col justify-between min-h-[580px] sm:min-h-[660px] md:min-h-[740px] gap-0.5 sm:gap-1 py-1 w-full max-w-full overflow-hidden">
+          <div className="flex flex-col justify-between min-h-[780px] sm:min-h-[880px] md:min-h-[980px] lg:min-h-[1050px] gap-1 sm:gap-1.5 md:gap-2 py-1 w-full max-w-full overflow-hidden">
             {pageData.lines && pageData.lines.length > 0 ? (
               pageData.lines.map((line) => (
                 <QuranLine

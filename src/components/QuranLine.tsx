@@ -61,20 +61,20 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
     return { totalChars: chars, wordCount: words.length };
   }, [line.words]);
 
-  // Typography scale classes calibrated to line length
+  // Typography scale classes calibrated to line length (enlarged for optimal readability)
   const fontSizeClass = useMemo(() => {
     if (totalChars > 115 || wordCount >= 14) {
-      // Ultra-dense lines (e.g. Page 530, Page 381 L3-4)
-      return 'text-[13px] sm:text-[15px] md:text-base lg:text-[1.125rem]';
+      // Ultra-dense lines
+      return 'text-sm sm:text-base md:text-lg lg:text-[1.42rem]';
     } else if (totalChars > 80 || wordCount >= 9) {
-      // Dense lines (e.g. Page 3, 4, standard full lines)
-      return 'text-[15px] sm:text-base md:text-lg lg:text-[1.28rem]';
+      // Dense lines (standard full lines)
+      return 'text-base sm:text-lg md:text-xl lg:text-[1.62rem]';
     } else if (totalChars >= 40) {
       // Normal lines
-      return 'text-base sm:text-lg md:text-xl lg:text-[1.42rem]';
+      return 'text-lg sm:text-xl md:text-2xl lg:text-[1.82rem]';
     } else {
-      // Short lines (e.g. Page 2 Surah Fatiha or short ayah endings)
-      return 'text-lg sm:text-xl md:text-2xl lg:text-[1.65rem]';
+      // Short lines (e.g. short ayah endings)
+      return 'text-xl sm:text-2xl md:text-3xl lg:text-[2.1rem]';
     }
   }, [totalChars, wordCount]);
 
@@ -92,7 +92,7 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
         const availableWidth = lineContainerRef.current.clientWidth;
         const requiredWidth = wordsContainerRef.current.scrollWidth;
         if (availableWidth > 0 && requiredWidth > availableWidth) {
-          const fitScale = Math.max(0.68, (availableWidth - 1) / requiredWidth);
+          const fitScale = Math.max(0.55, (availableWidth - 2) / requiredWidth);
           setScale(fitScale);
         } else if (scale !== 1) {
           setScale(1);

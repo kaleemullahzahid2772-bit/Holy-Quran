@@ -1,0 +1,213 @@
+{
+  "users": [
+    {
+      "id": "usr_free",
+      "name": "Usman Qadri (Free Tier)",
+      "email": "usman@madrasah.edu",
+      "role": "free",
+      "credits": 80,
+      "totalCreditsUsed": 20,
+      "subscription": "free",
+      "projectsCount": 1,
+      "createdAt": "2026-09-01T08:00:00.000Z"
+    },
+    {
+      "id": "usr_premium",
+      "name": "Dar-ul-Uloom Media Center",
+      "email": "media@darululoom.org",
+      "role": "premium",
+      "credits": 1145,
+      "totalCreditsUsed": 455,
+      "subscription": "premium_pro",
+      "projectsCount": 8,
+      "createdAt": "2026-08-15T10:00:00.000Z"
+    },
+    {
+      "id": "usr_admin",
+      "name": "System Administrator",
+      "email": "admin@ai-editor.internal",
+      "role": "admin",
+      "credits": 99999,
+      "totalCreditsUsed": 520,
+      "subscription": "enterprise",
+      "projectsCount": 15,
+      "createdAt": "2026-07-01T00:00:00.000Z"
+    }
+  ],
+  "institutionProfiles": {
+    "usr_premium": {
+      "institutionName": "Jamia Dar-ul-Uloom Media Wing",
+      "tagline": "Excellence in Classical & Modern Islamic Education",
+      "logoUrl": "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=200&auto=format&fit=crop&q=80",
+      "buildingUrl": "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&auto=format&fit=crop&q=80",
+      "classroomUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80",
+      "mosqueUrl": "https://images.unsplash.com/photo-1564769625905-50e93615e769?w=800&auto=format&fit=crop&q=80",
+      "teacherUrls": [
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80"
+      ],
+      "studentUrls": [
+        "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&auto=format&fit=crop&q=80"
+      ],
+      "brandColors": {
+        "primary": "#0D5C3A",
+        "accent": "#D4AF37",
+        "text": "#FFFFFF"
+      },
+      "contactInfo": {
+        "phone": "+92 300 1234567",
+        "website": "www.darululoom.edu.pk",
+        "location": "Karachi, Pakistan"
+      }
+    },
+    "usr_free": {
+      "institutionName": "Al-Huda Academy",
+      "tagline": "Nurturing Minds with Divine Wisdom",
+      "logoUrl": "",
+      "buildingUrl": "",
+      "classroomUrl": "",
+      "mosqueUrl": "",
+      "teacherUrls": [],
+      "studentUrls": [],
+      "brandColors": {
+        "primary": "#1E3A8A",
+        "accent": "#EAB308",
+        "text": "#FFFFFF"
+      },
+      "contactInfo": {
+        "phone": "+92 321 7654321",
+        "website": "www.alhuda.edu",
+        "location": "Lahore, Pakistan"
+      }
+    }
+  },
+  "projects": [],
+  "auditLogs": [
+    {
+      "id": "log_1789108530539_wem8",
+      "userId": "usr_free",
+      "timestamp": "2026-09-11T06:35:30.539Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 20,
+        "reason": "AI Auto Edit Timeline Generation",
+        "remaining": 80
+      }
+    },
+    {
+      "id": "log_1789108426865_ok7n",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:33:46.865Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 10,
+        "reason": "Reference Video Style Analysis",
+        "remaining": 1145
+      }
+    },
+    {
+      "id": "log_1789108324100_qu45",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:32:04.100Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 20,
+        "reason": "AI Auto Edit Timeline Generation",
+        "remaining": 1155
+      }
+    },
+    {
+      "id": "log_1789107957428_beig",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:25:57.428Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 20,
+        "reason": "AI Auto Edit Timeline Generation",
+        "remaining": 1175
+      }
+    },
+    {
+      "id": "log_1789107900981_3nn4",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:25:00.981Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 5,
+        "reason": "Conversational Timeline Revision",
+        "remaining": 1195
+      }
+    },
+    {
+      "id": "log_1789107436786_gtga",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:17:16.786Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 20,
+        "reason": "AI Auto Edit Timeline Generation",
+        "remaining": 1200
+      }
+    },
+    {
+      "id": "log_1789106876514_te5h",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:07:56.514Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 5,
+        "reason": "Conversational Timeline Revision",
+        "remaining": 1220
+      }
+    },
+    {
+      "id": "log_1789106876314_i291",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:07:56.314Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 5,
+        "reason": "Conversational Timeline Revision",
+        "remaining": 1225
+      }
+    },
+    {
+      "id": "log_1789106864456_kq2y",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:07:44.456Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 5,
+        "reason": "Conversational Timeline Revision",
+        "remaining": 1230
+      }
+    },
+    {
+      "id": "log_1789106864433_oter",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:07:44.433Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 5,
+        "reason": "Conversational Timeline Revision",
+        "remaining": 1235
+      }
+    },
+    {
+      "id": "log_1789106856597_jlva",
+      "userId": "usr_premium",
+      "timestamp": "2026-09-11T06:07:36.597Z",
+      "action": "CREDIT_DEDUCTION",
+      "details": {
+        "amount": 10,
+        "reason": "Reference Video Style Analysis",
+        "remaining": 1240
+      }
+    },
+    {
+      "id": "log_init",
+      "timestamp": "2026-09-11T06:03:47.694Z",
+      "action": "SYSTEM_BOOT",
+      "details": "AI Video Editing Server and Data Store initialized."
+    }
+  ]
+}

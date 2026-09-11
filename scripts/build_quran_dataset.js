@@ -253,6 +253,82 @@ for (let sIdx = 0; sIdx < 86; sIdx++) {
     const pageObj = pagesMap[pageNum];
     const isSurahStart = pageNum === startP;
 
+    if (surah.number === 1) {
+      pageObj.isIlluminated = true;
+      pageObj.lines.push({
+        lineNumber: 1,
+        isHeader: true,
+        headerType: 'surah_title',
+        surahNumber: 1,
+        surahName: 'الفَاتِحَة',
+        nameArabic: 'سُوْرَةُ الْفَاتِحَةِ مَكِّيَّةٌ',
+        subtitleArabic: 'آيَاتُهَا ٧  -  رُكُوْعُهَا ١',
+        totalAyahs: 7,
+        revelationType: 'Makki',
+        includeBismillah: false,
+        words: []
+      });
+      pageObj.lines.push({
+        lineNumber: 2,
+        isHeader: true,
+        headerType: 'bismillah',
+        words: sWords.slice(0, 4)
+      });
+      const p2Lines = [
+        [sWords[5], sWords[6], sWords[7], sWords[8], sWords[4], sWords[10]],
+        [sWords[11], sWords[9], sWords[13], sWords[14], sWords[15], sWords[12]],
+        [sWords[17], sWords[18], sWords[19], sWords[20], sWords[16]],
+        [sWords[22], sWords[23], sWords[24], sWords[21], sWords[26]],
+        [sWords[27], sWords[28], sWords[29], sWords[25], sWords[30]],
+        [sWords[31], sWords[32], sWords[33], sWords[34], sWords[35]]
+      ];
+      p2Lines.forEach((lWords, idx) => {
+        const lineNum = idx + 3;
+        lWords.forEach(w => { if (!w.isAyahMarker) { w.page = 2; w.line = lineNum; } });
+        pageObj.lines.push({ lineNumber: lineNum, isHeader: false, words: lWords });
+      });
+      wordIdx = sWords.length;
+      continue;
+    }
+
+    if (surah.number === 2 && pageNum === 3) {
+      pageObj.isIlluminated = true;
+      pageObj.lines.push({
+        lineNumber: 1,
+        isHeader: true,
+        headerType: 'surah_title',
+        surahNumber: 2,
+        surahName: 'البَقَرَة',
+        nameArabic: 'سُوْرَةُ الْبَقَرَةِ مَدَنِيَّةٌ',
+        subtitleArabic: 'آيَاتُهَا ۲۸۶  -  رُكُوْعَاتُهَا ۴۰',
+        totalAyahs: 286,
+        revelationType: 'Madani',
+        includeBismillah: false,
+        words: []
+      });
+      pageObj.lines.push({
+        lineNumber: 2,
+        isHeader: true,
+        headerType: 'bismillah',
+        words: []
+      });
+      const p3Lines = [
+        [sWords[0], sWords[1], sWords[2], sWords[3], sWords[4], sWords[5], sWords[6]],
+        [sWords[7], sWords[8], sWords[9], sWords[10], sWords[11]],
+        [sWords[12], sWords[13], sWords[14], sWords[15]],
+        [sWords[16], sWords[17], sWords[18], sWords[19]],
+        [sWords[20], sWords[21], sWords[22], sWords[23], sWords[24], sWords[25]],
+        [sWords[26], sWords[27], sWords[28], sWords[29], sWords[30], sWords[31]]
+      ];
+      p3Lines.forEach((lWords, idx) => {
+        const lineNum = idx + 3;
+        lWords.forEach(w => { if (!w.isAyahMarker) { w.page = 3; w.line = lineNum; } });
+        pageObj.lines.push({ lineNumber: lineNum, isHeader: false, words: lWords });
+      });
+      wordIdx = 32;
+      continue;
+    }
+
     const remainingPages = endP - pageNum + 1;
     const remainingWords = sWords.length - wordIdx;
     const wordsForThisPageCount = Math.ceil(remainingWords / remainingPages);
