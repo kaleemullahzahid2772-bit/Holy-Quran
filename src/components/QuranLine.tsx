@@ -16,15 +16,18 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
   // 1. Surah Title Banner Line
   if (line.isHeader && line.headerType === 'surah_title') {
     return (
-      <div className="w-full my-0.5 sm:my-1 py-1 sm:py-1.5 px-3 bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white rounded-lg border border-gold-400/60 shadow-sm flex items-center justify-between font-quran text-xs select-none">
-        <span className="text-[10px] text-emerald-200 font-sans">
-          آیاتها {line.totalAyahs}
-        </span>
-        <span className="text-sm sm:text-base font-bold text-gold-200 tracking-wider font-mushaf">
+      <div className="w-full my-0.5 sm:my-1 py-1 px-3 bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white rounded-lg border border-gold-400/60 shadow-sm flex items-center justify-between font-quran text-xs select-none">
+        <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-sans">
+          <span>آیاتها {line.totalAyahs}</span>
+          <span className="hidden sm:inline">| {line.revelationType === 'Madani' ? 'مَدَنِيَّة' : 'مَكِّيَّة'}</span>
+        </div>
+        {line.includeBismillah ? (
+          <span className="text-xs sm:text-sm font-mushaf font-bold text-gold-100 px-1">
+            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+          </span>
+        ) : null}
+        <span className="text-xs sm:text-base font-bold text-gold-200 tracking-wider font-mushaf">
           سُوْرَةُ {line.surahName}
-        </span>
-        <span className="text-[10px] text-emerald-200 font-sans">
-          {line.revelationType === 'Madani' ? 'مَدَنِيَّة' : 'مَكِّيَّة'}
         </span>
       </div>
     );
@@ -35,6 +38,15 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
     return (
       <div className="w-full my-0.5 py-0.5 text-center font-mushaf text-base sm:text-lg md:text-xl font-bold text-emerald-950 dark:text-gold-300 select-none">
         بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+      </div>
+    );
+  }
+
+  // 3. Dua Khatm al-Quran Banner Line
+  if (line.isHeader && line.headerType === 'dua_khatam') {
+    return (
+      <div className="w-full my-0.5 py-1 px-3 bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-800 text-white rounded-lg border border-gold-400/60 shadow-sm text-center font-mushaf text-sm sm:text-base font-bold text-gold-200 select-none">
+        دُعَاءُ خَتْمِ الْقُرْآنِ الْعَظِيمِ
       </div>
     );
   }
@@ -102,14 +114,12 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
       {/* Words container, ordered from Right to Left */}
       <div
         ref={wordsContainerRef}
-        className={`w-full flex items-center font-mushaf ${fontSizeClass} ${
-          isSparseLine ? 'justify-center gap-6 sm:gap-10' : 'justify-between'
-        }`}
+        className={`w-full flex items-center justify-center font-mushaf ${fontSizeClass} gap-x-1 sm:gap-x-1.5 md:gap-x-2`}
         style={
           scale < 1
             ? {
                 transform: `scale(${scale})`,
-                transformOrigin: 'right center',
+                transformOrigin: 'center center',
               }
             : undefined
         }

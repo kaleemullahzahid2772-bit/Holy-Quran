@@ -309,9 +309,18 @@ export class QuranDataService {
       }
     }
 
+function cleanArabicForMatch(text: string): string {
+  return (text || '')
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u06DF-\u06E4\u0640\u200C\u200D\u200E\u200F\uFEFF]/g, '')
+    .replace(/[ٱإأآء]/g, 'ا')
+    .replace(/[ة]/g, 'ه')
+    .replace(/[ىي]/g, 'ي')
+    .trim();
+}
+
     // 2. Check Offline Dictionary
-    const cleanWord = word.textClean || '';
-    const dictMatch = QURAN_WORD_DICTIONARY[cleanWord];
+    const cleanWord = cleanArabicForMatch(word.textClean || word.text || '');
+    const dictMatch = QURAN_WORD_DICTIONARY[cleanWord] || QURAN_WORD_DICTIONARY[word.textClean || ''];
     const fallback: WordTranslationResult | null = dictMatch
       ? {
           urdu: dictMatch.urdu,
@@ -325,10 +334,10 @@ export class QuranDataService {
       try {
         const [urRes, enRes] = await Promise.all([
           fetch(
-            `https://api.quran.com/api/v4/verses/by_key/${word.surah}:${word.ayah}?language=ur&words=true&word_fields=translation`
+            `https://api.quran.com/api/v4/verses/by_key/${word.surah}:${word.ayah}?language=ur&words=true&word_fields=text_uthmani,translation`
           ),
           fetch(
-            `https://api.quran.com/api/v4/verses/by_key/${word.surah}:${word.ayah}?language=en&words=true&word_fields=translation`
+            `https://api.quran.com/api/v4/verses/by_key/${word.surah}:${word.ayah}?language=en&words=true&word_fields=text_uthmani,translation`
           ),
         ]);
 
@@ -337,11 +346,14 @@ export class QuranDataService {
           const urWords = urData?.verse?.words || [];
           const enWords = enData?.verse?.words || [];
 
-          const ayahCache: Record<number, WordTranslationResult> = {};
+          let matchedItem: WordTranslationResult | null = null;
+          let bestDistance = Infinity;
+
           for (let i = 0; i < urWords.length; i++) {
             const uw = urWords[i];
             const ew = enWords[i] || {};
             const pos = uw.position || i + 1;
+            const apiClean = cleanArabicForMatch(uw.text_uthmani || uw.text || '');
 
             const item: WordTranslationResult = {
               urdu: uw.translation?.text || fallback?.urdu || '—',
@@ -349,21 +361,33 @@ export class QuranDataService {
               transliteration: ew.transliteration?.text || undefined,
             };
 
-            ayahCache[pos] = item;
+            // Store in cache
             wordTranslationCache[`${word.surah}_${word.ayah}_${pos}`] = item;
+
+            // Clean text match
+            if (apiClean && cleanWord && apiClean === cleanWord) {
+              const dist = Math.abs(pos - (word.position || 1));
+              if (dist < bestDistance) {
+                bestDistance = dist;
+                matchedItem = item;
+              }
+            }
           }
 
-          try {
-            localStorage.setItem(
-              `quran_wbw_${word.surah}_${word.ayah}`,
-              JSON.stringify(ayahCache)
-            );
-          } catch (e) {
-            // localStorage save error ignored
+          // Fallback to position match if no direct text match
+          if (!matchedItem && urWords[word.position - 1]) {
+            const uw = urWords[word.position - 1];
+            const ew = enWords[word.position - 1] || {};
+            matchedItem = {
+              urdu: uw.translation?.text || fallback?.urdu || '—',
+              english: ew.translation?.text || fallback?.english || '—',
+              transliteration: ew.transliteration?.text || undefined,
+            };
           }
 
-          if (ayahCache[word.position]) {
-            return ayahCache[word.position];
+          if (matchedItem) {
+            wordTranslationCache[cacheKey] = matchedItem;
+            return matchedItem;
           }
         }
       } catch (err) {

@@ -41,11 +41,12 @@ export interface QuranWordData {
 export interface QuranLineData {
   lineNumber: number;
   isHeader: boolean;
-  headerType?: 'surah_title' | 'bismillah';
+  headerType?: 'surah_title' | 'bismillah' | 'dua_khatam';
   surahNumber?: number;
   surahName?: string;
   totalAyahs?: number;
   revelationType?: string;
+  includeBismillah?: boolean;
   words: QuranWordData[];
 }
 

@@ -241,7 +241,8 @@ for (const w of allWords) {
   wordsBySurah[w.surah].push(w);
 }
 
-for (let sIdx = 0; sIdx < SURAHS.length; sIdx++) {
+// 1. Map Surahs 1 to 86 (Pages 2 to 537)
+for (let sIdx = 0; sIdx < 86; sIdx++) {
   const surah = SURAHS[sIdx];
   const sWords = wordsBySurah[surah.number] || [];
   const startP = surah.startPage;
@@ -261,7 +262,7 @@ for (let sIdx = 0; sIdx < SURAHS.length; sIdx++) {
     let availableLines = 16 - pageObj.lines.length;
     if (availableLines <= 0) continue;
 
-    if (isSurahStart && pageObj.lines.length === 0) {
+    if (isSurahStart) {
       pageObj.lines.push({
         lineNumber: pageObj.lines.length + 1,
         isHeader: true,
@@ -270,10 +271,12 @@ for (let sIdx = 0; sIdx < SURAHS.length; sIdx++) {
         surahName: surah.nameArabic,
         totalAyahs: surah.totalAyahs,
         revelationType: surah.revelationType,
+        includeBismillah: false,
         words: []
       });
 
-      if (surah.number !== 9) {
+      // No separate header Bismillah banner for Surah 1 (Bismillah is Ayah 1) or Surah 9 (At-Tawbah)
+      if (surah.number !== 1 && surah.number !== 9) {
         pageObj.lines.push({
           lineNumber: pageObj.lines.length + 1,
           isHeader: true,
@@ -309,6 +312,227 @@ for (let sIdx = 0; sIdx < SURAHS.length; sIdx++) {
   }
 }
 
+// 2. Map Page 538 (Surah 87 Al-A'la + Surah 88 Al-Ghashiyah Part 1)
+{
+  const s87 = SURAHS.find(s => s.number === 87);
+  const s87Words = wordsBySurah[87] || [];
+  const s88 = SURAHS.find(s => s.number === 88);
+  const s88Words = wordsBySurah[88] || [];
+  const p538 = pagesMap[538];
+
+  // Surah 87 Header (1 line, combined banner with Bismillah)
+  p538.lines.push({
+    lineNumber: p538.lines.length + 1,
+    isHeader: true,
+    headerType: 'surah_title',
+    surahNumber: s87.number,
+    surahName: s87.nameArabic,
+    totalAyahs: s87.totalAyahs,
+    revelationType: s87.revelationType,
+    includeBismillah: true,
+    words: []
+  });
+
+  // Surah 87 ayahs 1-19 (9 lines)
+  const wordsPerLine87 = Math.ceil(s87Words.length / 9);
+  for (let l = 0; l < 9; l++) {
+    const lWords = s87Words.slice(l * wordsPerLine87, (l + 1) * wordsPerLine87);
+    const lineNum = p538.lines.length + 1;
+    lWords.forEach(w => { if (!w.isAyahMarker) { w.page = 538; w.line = lineNum; } });
+    p538.lines.push({ lineNumber: lineNum, isHeader: false, words: lWords });
+  }
+
+  // Surah 88 Header (1 line, combined banner with Bismillah)
+  p538.lines.push({
+    lineNumber: p538.lines.length + 1,
+    isHeader: true,
+    headerType: 'surah_title',
+    surahNumber: s88.number,
+    surahName: s88.nameArabic,
+    totalAyahs: s88.totalAyahs,
+    revelationType: s88.revelationType,
+    includeBismillah: true,
+    words: []
+  });
+
+  // Surah 88 ayahs 1-14 (5 lines)
+  const s88Part1 = s88Words.filter(w => w.ayah <= 14);
+  const wordsPerLine88 = Math.ceil(s88Part1.length / 5);
+  for (let l = 0; l < 5; l++) {
+    const lWords = s88Part1.slice(l * wordsPerLine88, (l + 1) * wordsPerLine88);
+    const lineNum = p538.lines.length + 1;
+    lWords.forEach(w => { if (!w.isAyahMarker) { w.page = 538; w.line = lineNum; } });
+    p538.lines.push({ lineNumber: lineNum, isHeader: false, words: lWords });
+  }
+}
+
+// 3. Map Pages 539 to 549 using authentic 16-line multi-surah layout
+const PARA30_PAGE_SECTIONS = [
+  // Page 539
+  { page: 539, surah: 88, ayahs: [15, 26], linesCount: 6, isHeader: false },
+  { page: 539, surah: 89, isHeader: true, includeBismillah: true },
+  { page: 539, surah: 89, ayahs: [1, 16], linesCount: 9, isHeader: false },
+
+  // Page 540
+  { page: 540, surah: 89, ayahs: [17, 30], linesCount: 7, isHeader: false },
+  { page: 540, surah: 90, isHeader: true, includeBismillah: true },
+  { page: 540, surah: 90, ayahs: [1, 17], linesCount: 8, isHeader: false },
+
+  // Page 541
+  { page: 541, surah: 90, ayahs: [18, 20], linesCount: 2, isHeader: false },
+  { page: 541, surah: 91, isHeader: true, includeBismillah: true },
+  { page: 541, surah: 91, ayahs: [1, 15], linesCount: 7, isHeader: false },
+  { page: 541, surah: 92, isHeader: true, includeBismillah: true },
+  { page: 541, surah: 92, ayahs: [1, 12], linesCount: 5, isHeader: false },
+
+  // Page 542
+  { page: 542, surah: 92, ayahs: [13, 21], linesCount: 5, isHeader: false },
+  { page: 542, surah: 93, isHeader: true, includeBismillah: true },
+  { page: 542, surah: 93, ayahs: [1, 11], linesCount: 5, isHeader: false },
+  { page: 542, surah: 94, isHeader: true, includeBismillah: true },
+  { page: 542, surah: 94, ayahs: [1, 8], linesCount: 4, isHeader: false },
+
+  // Page 543
+  { page: 543, surah: 95, isHeader: true, includeBismillah: true },
+  { page: 543, surah: 95, ayahs: [1, 8], linesCount: 5, isHeader: false },
+  { page: 543, surah: 96, isHeader: true, includeBismillah: true },
+  { page: 543, surah: 96, ayahs: [1, 19], linesCount: 9, isHeader: false },
+
+  // Page 544
+  { page: 544, surah: 97, isHeader: true, includeBismillah: true },
+  { page: 544, surah: 97, ayahs: [1, 5], linesCount: 3, isHeader: false },
+  { page: 544, surah: 98, isHeader: true, includeBismillah: true },
+  { page: 544, surah: 98, ayahs: [1, 8], linesCount: 11, isHeader: false },
+
+  // Page 545
+  { page: 545, surah: 99, isHeader: true, includeBismillah: true },
+  { page: 545, surah: 99, ayahs: [1, 8], linesCount: 5, isHeader: false },
+  { page: 545, surah: 100, isHeader: true, includeBismillah: true },
+  { page: 545, surah: 100, ayahs: [1, 11], linesCount: 5, isHeader: false },
+  { page: 545, surah: 101, isHeader: true, includeBismillah: true },
+  { page: 545, surah: 101, ayahs: [1, 7], linesCount: 3, isHeader: false },
+
+  // Page 546
+  { page: 546, surah: 101, ayahs: [8, 11], linesCount: 2, isHeader: false },
+  { page: 546, surah: 102, isHeader: true, includeBismillah: true },
+  { page: 546, surah: 102, ayahs: [1, 8], linesCount: 4, isHeader: false },
+  { page: 546, surah: 103, isHeader: true, includeBismillah: true },
+  { page: 546, surah: 103, ayahs: [1, 3], linesCount: 2, isHeader: false },
+  { page: 546, surah: 104, isHeader: true, includeBismillah: true },
+  { page: 546, surah: 104, ayahs: [1, 9], linesCount: 5, isHeader: false },
+
+  // Page 547
+  { page: 547, surah: 105, isHeader: true, includeBismillah: true },
+  { page: 547, surah: 105, ayahs: [1, 5], linesCount: 3, isHeader: false },
+  { page: 547, surah: 106, isHeader: true, includeBismillah: true },
+  { page: 547, surah: 106, ayahs: [1, 4], linesCount: 3, isHeader: false },
+  { page: 547, surah: 107, isHeader: true, includeBismillah: true },
+  { page: 547, surah: 107, ayahs: [1, 7], linesCount: 4, isHeader: false },
+  { page: 547, surah: 108, isHeader: true, includeBismillah: true },
+  { page: 547, surah: 108, ayahs: [1, 3], linesCount: 2, isHeader: false },
+
+  // Page 548
+  { page: 548, surah: 109, isHeader: true, includeBismillah: true },
+  { page: 548, surah: 109, ayahs: [1, 6], linesCount: 3, isHeader: false },
+  { page: 548, surah: 110, isHeader: true, includeBismillah: true },
+  { page: 548, surah: 110, ayahs: [1, 3], linesCount: 2, isHeader: false },
+  { page: 548, surah: 111, isHeader: true, includeBismillah: true },
+  { page: 548, surah: 111, ayahs: [1, 5], linesCount: 3, isHeader: false },
+  { page: 548, surah: 112, isHeader: true, includeBismillah: true },
+  { page: 548, surah: 112, ayahs: [1, 4], linesCount: 2, isHeader: false },
+
+  // Page 549
+  { page: 549, surah: 113, isHeader: true, includeBismillah: true },
+  { page: 549, surah: 113, ayahs: [1, 5], linesCount: 3, isHeader: false },
+  { page: 549, surah: 114, isHeader: true, includeBismillah: true },
+  { page: 549, surah: 114, ayahs: [1, 6], linesCount: 3, isHeader: false },
+];
+
+for (const sec of PARA30_PAGE_SECTIONS) {
+  const pObj = pagesMap[sec.page];
+  const surahMeta = SURAHS.find(s => s.number === sec.surah);
+
+  if (sec.isHeader) {
+    pObj.lines.push({
+      lineNumber: pObj.lines.length + 1,
+      isHeader: true,
+      headerType: 'surah_title',
+      surahNumber: surahMeta.number,
+      surahName: surahMeta.nameArabic,
+      totalAyahs: surahMeta.totalAyahs,
+      revelationType: surahMeta.revelationType,
+      includeBismillah: sec.includeBismillah,
+      words: []
+    });
+  } else {
+    const [startAyah, endAyah] = sec.ayahs;
+    const secWords = wordsBySurah[sec.surah].filter(w => w.ayah >= startAyah && w.ayah <= endAyah);
+    const linesCount = sec.linesCount;
+    const wordsPerLine = Math.max(1, Math.ceil(secWords.length / linesCount));
+
+    for (let l = 0; l < linesCount; l++) {
+      const lineWords = secWords.slice(l * wordsPerLine, (l + 1) * wordsPerLine);
+      const lineNum = pObj.lines.length + 1;
+      lineWords.forEach(w => {
+        if (!w.isAyahMarker) {
+          w.page = sec.page;
+          w.line = lineNum;
+        }
+      });
+      pObj.lines.push({
+        lineNumber: lineNum,
+        isHeader: false,
+        words: lineWords
+      });
+    }
+  }
+}
+
+// Dua Khatm al-Quran for Page 549
+const DUA_KHATAM_LINES = [
+  'اللَّهُمَّ آنِسْ وَحْشَتِي فِي قَبْرِي',
+  'اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ الْعَظِيمِ',
+  'وَاجْعَلْهُ لِي إِمَامًا وَنُورًا وَهُدًى وَرَحْمَةً',
+  'اللَّهُمَّ ذَكِّرْنِي مِنْهُ مَا نَسِيتُ وَعَلِّمْنِي مِنْهُ مَا جَهِلْتُ',
+  'وَارْزُقْنِي تِلَاوَتَهُ آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ',
+  'وَاجْعَلْهُ لِي حُجَّةً يَا رَبَّ الْعَالَمِينَ',
+  'صَدَقَ اللّٰهُ الْعَلِیُّ الْعَظِیْمُ وَبَلَّغَ رَسُولُهُ الْکَرِیْمُ'
+];
+
+const p549 = pagesMap[549];
+p549.lines.push({
+  lineNumber: p549.lines.length + 1,
+  isHeader: true,
+  headerType: 'dua_khatam',
+  words: []
+});
+
+for (let dIdx = 0; dIdx < DUA_KHATAM_LINES.length; dIdx++) {
+  const lineText = DUA_KHATAM_LINES[dIdx];
+  const words = lineText.split(' ').map((txt, wIdx) => ({
+    id: 990000 + dIdx * 20 + wIdx,
+    surah: 114,
+    surahName: 'دعاء ختم القرآن',
+    ayah: 0,
+    position: wIdx + 1,
+    text: txt,
+    textClean: cleanArabicText(txt),
+    characters: txt.split('').map(c => ({ char: c, rules: [], color: '#1e293b' })),
+    rules: [],
+    tajweedSummary: 'عام تلفظ (Normal)',
+    diacritics: countDiacritics(txt),
+    page: 549,
+    line: p549.lines.length + 1
+  }));
+
+  p549.lines.push({
+    lineNumber: p549.lines.length + 1,
+    isHeader: false,
+    words
+  });
+}
+
+// Fill remaining lines to exactly 16 for all pages 2 to 549
 for (let p = 2; p <= 549; p++) {
   const pageObj = pagesMap[p];
   while (pageObj.lines.length < 16) {

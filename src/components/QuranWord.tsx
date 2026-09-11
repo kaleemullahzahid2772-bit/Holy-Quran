@@ -142,9 +142,7 @@ export const QuranWord: React.FC<QuranWordProps> = React.memo(({
         e.stopPropagation();
         onSelectWord(word);
       }}
-      className={`inline-block ${
-        isCompact ? 'px-0.5 sm:px-1 py-0.5' : 'px-1 sm:px-1.5 py-0.5'
-      } rounded-lg cursor-pointer transition-all duration-150 active:scale-95 text-right font-mushaf select-none shrink-0 ${
+      className={`inline-block px-0.5 py-0.5 rounded cursor-pointer transition-all duration-150 active:scale-95 text-right font-mushaf select-none shrink-0 ${
         isSelected
           ? 'bg-gold-200/80 dark:bg-gold-900/60 ring-2 ring-gold-500 shadow-sm'
           : 'hover:bg-emerald-500/15 dark:hover:bg-emerald-400/20'
