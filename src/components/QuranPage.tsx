@@ -39,7 +39,9 @@ export const QuranPage: React.FC<QuranPageProps> = React.memo(({
   }
 
   // Convert number to Eastern Arabic numerals (e.g. 4 -> ۴)
-  const pageNumberArabic = pageNumber.toLocaleString('ar-EG');
+  const pageNumberArabic = typeof pageNumber === 'number' && !isNaN(pageNumber)
+    ? pageNumber.toLocaleString('ar-EG')
+    : (pageNumber ? String(pageNumber) : '');
 
   return (
     <div className="w-full max-w-[820px] mx-auto my-2 p-1.5 sm:p-3 md:p-4 bg-[#fdfbf7] dark:bg-emerald-950/80 rounded-2xl shadow-xl border border-gold-400/40 select-none animate-fade-in box-border">

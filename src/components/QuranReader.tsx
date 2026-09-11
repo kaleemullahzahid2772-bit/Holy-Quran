@@ -517,25 +517,29 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                 </div>
 
                 {/* Islamic Open Spine Center Crease Divider */}
-                <div className="hidden lg:flex flex-col items-center justify-center self-stretch py-6 select-none opacity-40">
-                  <div className="w-0.5 h-full bg-gradient-to-b from-transparent via-gold-500 to-transparent"></div>
-                </div>
+                {leftPageNumber && (
+                  <div className="hidden lg:flex flex-col items-center justify-center self-stretch py-6 select-none opacity-40">
+                    <div className="w-0.5 h-full bg-gradient-to-b from-transparent via-gold-500 to-transparent"></div>
+                  </div>
+                )}
 
                 {/* Left Page (Next Page in RTL, e.g. Page 3) */}
-                <div className="w-full lg:flex-1 max-w-[760px]">
-                  <QuranPage
-                    pageData={leftPageData}
-                    pageNumber={leftPageNumber}
-                    surah={leftSurah}
-                    juz={leftJuz}
-                    onSelectWord={handleSelectWord}
-                    selectedWordId={selectedWord?.id}
-                    onOpenPageDetails={() => {
-                      setDetailsPageNumber(leftPageNumber);
-                      setIsPageDetailsModalOpen(true);
-                    }}
-                  />
-                </div>
+                {leftPageNumber && (
+                  <div className="w-full lg:flex-1 max-w-[760px]">
+                    <QuranPage
+                      pageData={leftPageData}
+                      pageNumber={leftPageNumber}
+                      surah={leftSurah}
+                      juz={leftJuz}
+                      onSelectWord={handleSelectWord}
+                      selectedWordId={selectedWord?.id}
+                      onOpenPageDetails={() => {
+                        setDetailsPageNumber(leftPageNumber);
+                        setIsPageDetailsModalOpen(true);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             ) : (
               /* Single Page Mode (Mobile, Tablet, or User Chosen Single View) */
