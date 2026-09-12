@@ -4593,8 +4593,8 @@
     "pageNumber": 125,
     "isQuranText": true,
     "totalLines": 16,
-    "wordCount": 132,
-    "letterCount": 1176,
+    "wordCount": 133,
+    "letterCount": 1179,
     "surahCount": 1,
     "ayahCount": 11,
     "surahs": [
@@ -4607,16 +4607,16 @@
       "ikhfa": 3,
       "idgham": 2,
       "tafkhim": 18,
-      "normal": 51
+      "normal": 52
     },
     "diacriticsCounts": {
-      "fatha": 229,
+      "fatha": 231,
       "kasra": 86,
       "damma": 62,
       "fathatan": 5,
       "kasratan": 5,
       "dammatan": 3,
-      "sukoon": 72,
+      "sukoon": 73,
       "shaddah": 37,
       "maddah": 17,
       "standingFatha": 27,
