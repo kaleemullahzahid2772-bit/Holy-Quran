@@ -99,29 +99,66 @@ export class QuranDataService {
   }
 
   /**
-   * Load real, calculated Page Statistics for a page
+   * Normalize raw statistics from JSON or fallback into standard PageStatistics
    */
-  static async getPageStatistics(pageNumber: number): Promise<PageStatistics> {
-    const clamped = Math.max(1, Math.min(559, pageNumber));
-
-    if (!pageStatsCache) {
-      try {
-        const res = await fetch(`${getBasePath()}data/pageStatistics.json`);
-        if (res.ok) {
-          pageStatsCache = await res.json();
-        }
-      } catch (e) {
-        console.error('Failed to load page statistics:', e);
-      }
+  static normalizePageStatistics(raw: any, pageNumber: number): PageStatistics {
+    if (!raw) {
+      return {
+        pageNumber,
+        isQuranText: pageNumber >= 2 && pageNumber <= 549,
+        totalWords: 0,
+        totalLetters: 0,
+        countFatha: 0,
+        countKasra: 0,
+        countDamma: 0,
+        countFathatan: 0,
+        countKasratan: 0,
+        countDammatan: 0,
+        countSukoon: 0,
+        countShaddah: 0,
+        countMaddah: 0,
+        countStandingFatha: 0,
+        countStandingKasra: 0,
+        countInvertedDamma: 0,
+        countHeavyLetters: 0,
+        countQalqalah: 0,
+        isCalculated: false
+      };
     }
 
-    if (pageStatsCache && pageStatsCache[clamped]) {
-      return pageStatsCache[clamped];
-    }
+    const dCounts = raw.diacriticsCounts || {};
+    const tCounts = raw.tajweedCounts || {};
 
     return {
-      pageNumber: clamped,
-      isQuranText: clamped >= 2 && clamped <= 549,
+      pageNumber: raw.pageNumber ?? pageNumber,
+      isQuranText: raw.isQuranText ?? (pageNumber >= 2 && pageNumber <= 549),
+      totalWords: raw.totalWords ?? raw.wordCount ?? 0,
+      totalLetters: raw.totalLetters ?? raw.letterCount ?? 0,
+      countFatha: raw.countFatha ?? dCounts.fatha ?? 0,
+      countKasra: raw.countKasra ?? dCounts.kasra ?? 0,
+      countDamma: raw.countDamma ?? dCounts.damma ?? 0,
+      countFathatan: raw.countFathatan ?? dCounts.fathatan ?? 0,
+      countKasratan: raw.countKasratan ?? dCounts.kasratan ?? 0,
+      countDammatan: raw.countDammatan ?? dCounts.dammatan ?? 0,
+      countSukoon: raw.countSukoon ?? dCounts.sukoon ?? 0,
+      countShaddah: raw.countShaddah ?? dCounts.shaddah ?? 0,
+      countMaddah: raw.countMaddah ?? dCounts.maddah ?? tCounts.madd ?? 0,
+      countStandingFatha: raw.countStandingFatha ?? dCounts.standingFatha ?? 0,
+      countStandingKasra: raw.countStandingKasra ?? dCounts.standingKasra ?? 0,
+      countInvertedDamma: raw.countInvertedDamma ?? dCounts.invertedDamma ?? 0,
+      countHeavyLetters: raw.countHeavyLetters ?? dCounts.heavyLetters ?? tCounts.tafkhim ?? 0,
+      countQalqalah: raw.countQalqalah ?? dCounts.qalqalah ?? tCounts.qalqalah ?? 0,
+      isCalculated: true
+    };
+  }
+
+  /**
+   * Dynamically calculate real statistics directly from 16-line page data
+   */
+  static calculatePageStatisticsFromData(pageData: QuranPageData): PageStatistics {
+    const stats: PageStatistics = {
+      pageNumber: pageData.pageNumber,
+      isQuranText: pageData.isQuranText,
       totalWords: 0,
       totalLetters: 0,
       countFatha: 0,
@@ -138,8 +175,87 @@ export class QuranDataService {
       countInvertedDamma: 0,
       countHeavyLetters: 0,
       countQalqalah: 0,
-      isCalculated: false
+      isCalculated: true
     };
+
+    if (!pageData.lines || !Array.isArray(pageData.lines)) return stats;
+
+    for (const line of pageData.lines) {
+      if (line.isHeader || !line.words) continue;
+      for (const w of line.words) {
+        if (w.isAyahMarker) continue;
+        stats.totalWords++;
+        if (w.characters && Array.isArray(w.characters)) {
+          stats.totalLetters += w.characters.length;
+        }
+        if (w.diacritics) {
+          stats.countFatha += w.diacritics.fatha || 0;
+          stats.countKasra += w.diacritics.kasra || 0;
+          stats.countDamma += w.diacritics.damma || 0;
+          stats.countFathatan += w.diacritics.fathatan || 0;
+          stats.countKasratan += w.diacritics.kasratan || 0;
+          stats.countDammatan += w.diacritics.dammatan || 0;
+          stats.countSukoon += w.diacritics.sukoon || 0;
+          stats.countShaddah += w.diacritics.shaddah || 0;
+          stats.countMaddah += w.diacritics.maddah || 0;
+          stats.countStandingFatha += w.diacritics.standingFatha || 0;
+          stats.countStandingKasra += w.diacritics.standingKasra || 0;
+          stats.countInvertedDamma += w.diacritics.invertedDamma || 0;
+          stats.countHeavyLetters += w.diacritics.heavyLetters || 0;
+          stats.countQalqalah += w.diacritics.qalqalah || 0;
+        }
+      }
+    }
+
+    return stats;
+  }
+
+  /**
+   * Load real, calculated Page Statistics for a page
+   */
+  static async getPageStatistics(pageNumber: number): Promise<PageStatistics> {
+    const clamped = Math.max(1, Math.min(559, pageNumber));
+
+    if (!pageStatsCache) {
+      try {
+        const res = await fetch(`${getBasePath()}data/pageStatistics.json`);
+        if (res.ok) {
+          const rawData = await res.json();
+          pageStatsCache = {};
+          for (const [key, raw] of Object.entries(rawData as Record<string, any>)) {
+            const p = Number(key);
+            pageStatsCache[p] = QuranDataService.normalizePageStatistics(raw, p);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load page statistics:', e);
+      }
+    }
+
+    if (pageStatsCache && pageStatsCache[clamped] && pageStatsCache[clamped].totalWords > 0) {
+      return pageStatsCache[clamped];
+    }
+
+    // Dynamic Fallback: calculate directly from page data if text page
+    if (clamped >= 2 && clamped <= 549) {
+      try {
+        const pageData = await QuranDataService.getPageData(clamped);
+        const calculated = QuranDataService.calculatePageStatisticsFromData(pageData);
+        if (calculated.totalWords > 0) {
+          if (!pageStatsCache) pageStatsCache = {};
+          pageStatsCache[clamped] = calculated;
+          return calculated;
+        }
+      } catch (e) {
+        console.error(`Failed to calculate fallback statistics for page ${clamped}:`, e);
+      }
+    }
+
+    if (pageStatsCache && pageStatsCache[clamped]) {
+      return pageStatsCache[clamped];
+    }
+
+    return QuranDataService.normalizePageStatistics(null, clamped);
   }
 
   /**

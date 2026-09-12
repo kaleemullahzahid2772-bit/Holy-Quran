@@ -15,27 +15,46 @@ export const PageStatisticsPanel: React.FC<PageStatisticsPanelProps> = ({
   onToggle,
   pageNumber,
 }) => {
-  const totalTanween =
-    (statistics.countFathatan || 0) +
-    (statistics.countKasratan || 0) +
-    (statistics.countDammatan || 0);
+  const sAny = statistics as any;
+  const dCounts = sAny?.diacriticsCounts || {};
+  const tCounts = sAny?.tajweedCounts || {};
+
+  const totalWords = statistics?.totalWords ?? sAny?.wordCount ?? 0;
+  const totalLetters = statistics?.totalLetters ?? sAny?.letterCount ?? 0;
+  const countFatha = statistics?.countFatha ?? dCounts.fatha ?? 0;
+  const countKasra = statistics?.countKasra ?? dCounts.kasra ?? 0;
+  const countDamma = statistics?.countDamma ?? dCounts.damma ?? 0;
+  const countFathatan = statistics?.countFathatan ?? dCounts.fathatan ?? 0;
+  const countKasratan = statistics?.countKasratan ?? dCounts.kasratan ?? 0;
+  const countDammatan = statistics?.countDammatan ?? dCounts.dammatan ?? 0;
+  const countSukoon = statistics?.countSukoon ?? dCounts.sukoon ?? 0;
+  const countShaddah = statistics?.countShaddah ?? dCounts.shaddah ?? 0;
+  const countMaddah = statistics?.countMaddah ?? dCounts.maddah ?? tCounts.madd ?? 0;
+  const countStandingFatha = statistics?.countStandingFatha ?? dCounts.standingFatha ?? 0;
+  const countStandingKasra = statistics?.countStandingKasra ?? dCounts.standingKasra ?? 0;
+  const countInvertedDamma = statistics?.countInvertedDamma ?? dCounts.invertedDamma ?? 0;
+  const countHeavyLetters = statistics?.countHeavyLetters ?? dCounts.heavyLetters ?? tCounts.tafkhim ?? 0;
+  const countQalqalah = statistics?.countQalqalah ?? dCounts.qalqalah ?? tCounts.qalqalah ?? 0;
+
+  const totalTanween = countFathatan + countKasratan + countDammatan;
+  const totalStanding = countStandingFatha + countStandingKasra + countInvertedDamma;
 
   const mainStats = [
-    { labelUrdu: 'کل الفاظ', labelEng: 'Words', val: statistics.totalWords, color: 'text-amber-700 dark:text-amber-300' },
-    { labelUrdu: 'کل حروف', labelEng: 'Letters', val: statistics.totalLetters, color: 'text-emerald-700 dark:text-emerald-300' },
-    { labelUrdu: 'حروفِ مستعلیہ', labelEng: 'Heavy (خ ص ض...)', val: statistics.countHeavyLetters, color: 'text-green-700 dark:text-green-400' },
-    { labelUrdu: 'حروفِ قلقلہ', labelEng: 'Qalqalah (ق ط ب...)', val: statistics.countQalqalah, color: 'text-sky-700 dark:text-sky-400' },
-    { labelUrdu: 'مدّات', labelEng: 'Maddah (~)', val: statistics.countMaddah, color: 'text-rose-700 dark:text-rose-400' },
-    { labelUrdu: 'تشدید', labelEng: 'Shaddah ( ّ )', val: statistics.countShaddah, color: 'text-purple-700 dark:text-purple-300' },
+    { labelUrdu: 'کل الفاظ', labelEng: 'Words', val: totalWords, color: 'text-amber-700 dark:text-amber-300' },
+    { labelUrdu: 'کل حروف', labelEng: 'Letters', val: totalLetters, color: 'text-emerald-700 dark:text-emerald-300' },
+    { labelUrdu: 'حروفِ مستعلیہ', labelEng: 'Heavy (خ ص ض...)', val: countHeavyLetters, color: 'text-green-700 dark:text-green-400' },
+    { labelUrdu: 'حروفِ قلقلہ', labelEng: 'Qalqalah (ق ط ب...)', val: countQalqalah, color: 'text-sky-700 dark:text-sky-400' },
+    { labelUrdu: 'مدّات', labelEng: 'Maddah (~)', val: countMaddah, color: 'text-rose-700 dark:text-rose-400' },
+    { labelUrdu: 'تشدید', labelEng: 'Shaddah ( ّ )', val: countShaddah, color: 'text-purple-700 dark:text-purple-300' },
   ];
 
   const harakatStats = [
-    { labelUrdu: 'زبر (فتحه)', labelEng: 'Fatha ( َ )', val: statistics.countFatha },
-    { labelUrdu: 'زیر (کسره)', labelEng: 'Kasra ( ِ )', val: statistics.countKasra },
-    { labelUrdu: 'پیش (ضمّه)', labelEng: 'Damma ( ُ )', val: statistics.countDamma },
-    { labelUrdu: 'سکون / جزم', labelEng: 'Sukoon ( ْ )', val: statistics.countSukoon },
+    { labelUrdu: 'زبر (فتحه)', labelEng: 'Fatha ( َ )', val: countFatha },
+    { labelUrdu: 'زیر (کسره)', labelEng: 'Kasra ( ِ )', val: countKasra },
+    { labelUrdu: 'پیش (ضمّه)', labelEng: 'Damma ( ُ )', val: countDamma },
+    { labelUrdu: 'سکون / جزم', labelEng: 'Sukoon ( ْ )', val: countSukoon },
     { labelUrdu: 'دو زبر / تنوین', labelEng: 'Tanween ( ً ٍ ٌ )', val: totalTanween },
-    { labelUrdu: 'کھڑی حرکات', labelEng: 'Standing ( ٰ ٖ ٗ )', val: (statistics.countStandingFatha || 0) + (statistics.countStandingKasra || 0) + (statistics.countInvertedDamma || 0) },
+    { labelUrdu: 'کھڑی حرکات', labelEng: 'Standing ( ٰ ٖ ٗ )', val: totalStanding },
   ];
 
   return (

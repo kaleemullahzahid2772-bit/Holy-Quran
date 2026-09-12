@@ -29,10 +29,28 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
 }) => {
   if (!isOpen || !statistics) return null;
 
-  const totalTanween =
-    (statistics.countFathatan || 0) +
-    (statistics.countKasratan || 0) +
-    (statistics.countDammatan || 0);
+  const sAny = statistics as any;
+  const dCounts = sAny?.diacriticsCounts || {};
+  const tCounts = sAny?.tajweedCounts || {};
+
+  const totalWords = statistics.totalWords ?? sAny?.wordCount ?? 0;
+  const totalLetters = statistics.totalLetters ?? sAny?.letterCount ?? 0;
+  const countFatha = statistics.countFatha ?? dCounts.fatha ?? 0;
+  const countKasra = statistics.countKasra ?? dCounts.kasra ?? 0;
+  const countDamma = statistics.countDamma ?? dCounts.damma ?? 0;
+  const countFathatan = statistics.countFathatan ?? dCounts.fathatan ?? 0;
+  const countKasratan = statistics.countKasratan ?? dCounts.kasratan ?? 0;
+  const countDammatan = statistics.countDammatan ?? dCounts.dammatan ?? 0;
+  const countSukoon = statistics.countSukoon ?? dCounts.sukoon ?? 0;
+  const countShaddah = statistics.countShaddah ?? dCounts.shaddah ?? 0;
+  const countMaddah = statistics.countMaddah ?? dCounts.maddah ?? tCounts.madd ?? 0;
+  const countStandingFatha = statistics.countStandingFatha ?? dCounts.standingFatha ?? 0;
+  const countStandingKasra = statistics.countStandingKasra ?? dCounts.standingKasra ?? 0;
+  const countInvertedDamma = statistics.countInvertedDamma ?? dCounts.invertedDamma ?? 0;
+  const countHeavyLetters = statistics.countHeavyLetters ?? dCounts.heavyLetters ?? tCounts.tafkhim ?? 0;
+  const countQalqalah = statistics.countQalqalah ?? dCounts.qalqalah ?? tCounts.qalqalah ?? 0;
+
+  const totalTanween = countFathatan + countKasratan + countDammatan;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -73,7 +91,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 کل الفاظ (Words)
               </span>
               <span className="text-2xl font-extrabold text-amber-900 dark:text-amber-200 font-sans">
-                {(statistics?.totalWords ?? 0).toLocaleString()}
+                {totalWords.toLocaleString()}
               </span>
             </div>
 
@@ -83,7 +101,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 کل حروف (Letters)
               </span>
               <span className="text-2xl font-extrabold text-emerald-900 dark:text-emerald-200 font-sans">
-                {(statistics?.totalLetters ?? 0).toLocaleString()}
+                {totalLetters.toLocaleString()}
               </span>
             </div>
 
@@ -93,7 +111,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 موٹے حروف (Heavy)
               </span>
               <span className="text-2xl font-extrabold text-green-800 dark:text-green-300 font-sans">
-                {(statistics?.countHeavyLetters ?? 0).toLocaleString()}
+                {countHeavyLetters.toLocaleString()}
               </span>
             </div>
 
@@ -103,7 +121,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 حروفِ قلقلہ
               </span>
               <span className="text-2xl font-extrabold text-sky-800 dark:text-sky-300 font-sans">
-                {(statistics?.countQalqalah ?? 0).toLocaleString()}
+                {countQalqalah.toLocaleString()}
               </span>
             </div>
           </div>
@@ -130,7 +148,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-mushaf font-bold text-emerald-600">َ</span>
                   <span className="text-base font-extrabold text-emerald-800 dark:text-emerald-300 font-sans">
-                    {(statistics?.countFatha ?? 0).toLocaleString()}
+                    {countFatha.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -146,7 +164,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-mushaf font-bold text-emerald-600">ِ</span>
                   <span className="text-base font-extrabold text-emerald-800 dark:text-emerald-300 font-sans">
-                    {(statistics?.countKasra ?? 0).toLocaleString()}
+                    {countKasra.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -162,7 +180,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-mushaf font-bold text-emerald-600">ُ</span>
                   <span className="text-base font-extrabold text-emerald-800 dark:text-emerald-300 font-sans">
-                    {(statistics?.countDamma ?? 0).toLocaleString()}
+                    {countDamma.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -178,7 +196,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-mushaf font-bold text-gray-500">ْ</span>
                   <span className="text-base font-extrabold text-gray-900 dark:text-gray-100 font-sans">
-                    {(statistics?.countSukoon ?? 0).toLocaleString()}
+                    {countSukoon.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -194,7 +212,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-mushaf font-bold text-purple-600">ّ</span>
                   <span className="text-base font-extrabold text-purple-700 dark:text-purple-300 font-sans">
-                    {(statistics?.countShaddah ?? 0).toLocaleString()}
+                    {countShaddah.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -210,7 +228,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-mushaf font-bold text-rose-600">~</span>
                   <span className="text-base font-extrabold text-rose-700 dark:text-rose-300 font-sans">
-                    {(statistics?.countMaddah ?? 0).toLocaleString()}
+                    {countMaddah.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -229,7 +247,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
                 <div className="text-[10px] text-gray-500">دو زبر (ً)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
-                  {statistics.countFathatan || 0}
+                  {countFathatan}
                 </div>
               </div>
 
@@ -237,7 +255,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
                 <div className="text-[10px] text-gray-500">دو زیر (ٍ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
-                  {statistics.countKasratan || 0}
+                  {countKasratan}
                 </div>
               </div>
 
@@ -245,7 +263,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
                 <div className="text-[10px] text-gray-500">دو پیش (ٌ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
-                  {statistics.countDammatan || 0}
+                  {countDammatan}
                 </div>
               </div>
 
@@ -263,19 +281,19 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
                 <div className="text-[10px] text-gray-500">کھڑی زبر (ٰ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
-                  {statistics.countStandingFatha || 0}
+                  {countStandingFatha}
                 </div>
               </div>
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
                 <div className="text-[10px] text-gray-500">کھڑی زیر (ٖ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
-                  {statistics.countStandingKasra || 0}
+                  {countStandingKasra}
                 </div>
               </div>
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
                 <div className="text-[10px] text-gray-500">الٹا پیش (ٗ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
-                  {statistics.countInvertedDamma || 0}
+                  {countInvertedDamma}
                 </div>
               </div>
             </div>
@@ -297,7 +315,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   </span>
                 </div>
                 <span className="font-extrabold text-green-700 dark:text-green-400 font-sans">
-                  {statistics.countHeavyLetters} بار
+                  {countHeavyLetters} بار
                 </span>
               </div>
 
@@ -309,7 +327,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   </span>
                 </div>
                 <span className="font-extrabold text-sky-700 dark:text-sky-400 font-sans">
-                  {statistics.countQalqalah} بار
+                  {countQalqalah} بار
                 </span>
               </div>
             </div>

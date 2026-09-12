@@ -72,11 +72,23 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
   const [leftPageData, setLeftPageData] = useState<QuranPageData | null>(null);
   const [statistics, setStatistics] = useState<PageStatistics | null>(null);
   const [leftStatistics, setLeftStatistics] = useState<PageStatistics | null>(null);
+  const [modalStatistics, setModalStatistics] = useState<PageStatistics | null>(null);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   
   // Optional Reference Scan Comparison Toggle
   const [showPdfReference, setShowPdfReference] = useState<boolean>(false);
   const [refImageLoaded, setRefImageLoaded] = useState<boolean>(false);
+
+  // Sync statistics specifically for detailsPageNumber when PageDetailsModal is open
+  useEffect(() => {
+    if (isPageDetailsModalOpen && detailsPageNumber) {
+      QuranDataService.getPageStatistics(detailsPageNumber).then((stats) => {
+        setModalStatistics(stats);
+      }).catch((err) => {
+        console.error('Error fetching modal page stats:', err);
+      });
+    }
+  }, [isPageDetailsModalOpen, detailsPageNumber]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
@@ -382,7 +394,10 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
               </button>
 
               <button
-                onClick={() => setIsPageDetailsModalOpen(true)}
+                onClick={() => {
+                  setDetailsPageNumber(currentPage);
+                  setIsPageDetailsModalOpen(true);
+                }}
                 className="p-2 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-xl transition-colors"
                 title="صفحہ کی تفصیلات (اعراب، حروف، تجوید)"
               >
@@ -658,7 +673,11 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
       <PageDetailsModal
         isOpen={isPageDetailsModalOpen}
         onClose={() => setIsPageDetailsModalOpen(false)}
-        statistics={detailsPageNumber === rightPageNumber ? statistics : (leftStatistics || statistics)}
+        statistics={
+          modalStatistics?.pageNumber === detailsPageNumber
+            ? modalStatistics
+            : (detailsPageNumber === rightPageNumber ? statistics : (detailsPageNumber === leftPageNumber ? leftStatistics : (statistics || modalStatistics)))
+        }
         pageNumber={detailsPageNumber}
         surah={QuranDataService.getSurahForPage(detailsPageNumber)}
         juz={QuranDataService.getJuzForPage(detailsPageNumber)}
