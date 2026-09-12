@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   X,
   Sparkles,
@@ -246,9 +246,21 @@ export const QuranStatsModal: React.FC<QuranStatsModalProps> = ({ isOpen, onClos
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0">
-                        <span className="text-2xl font-bold font-mushaf text-emerald-900 dark:text-gold-300">
-                          {item.sample}
-                        </span>
+                        {item.id === 6 ? (
+                          <div className="flex flex-col items-center justify-center gap-1 text-emerald-900 dark:text-gold-300 select-none py-1" title="ث کے تین نقطے">
+                            {/* Top single dot of letter ث */}
+                            <span className="w-2.5 h-2.5 rounded-full bg-current shadow-xs inline-block"></span>
+                            {/* Bottom two dots of letter ث */}
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-current shadow-xs inline-block"></span>
+                              <span className="w-2.5 h-2.5 rounded-full bg-current shadow-xs inline-block"></span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-2xl font-bold font-mushaf text-emerald-900 dark:text-gold-300">
+                            {item.sample}
+                          </span>
+                        )}
                       </div>
 
                       <div className="text-right">

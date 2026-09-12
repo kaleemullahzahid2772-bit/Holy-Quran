@@ -1,4 +1,4 @@
-﻿export interface QuranLetterStatistic {
+export interface QuranLetterStatistic {
   id: number;
   letter: string;
   nameUrdu: string;
@@ -122,10 +122,10 @@ export const QURAN_DIACRITICS_STATISTICS: QuranDiacriticStatistic[] = [
   },
   {
     id: 6,
-    nameUrdu: 'نقات (نقطے)',
+    nameUrdu: 'نقاط (نقطے)',
     nameArabic: 'النِّقَاط',
-    symbol: '•',
-    sample: 'ن / ت / ب / ث',
+    symbol: '∴',
+    sample: '∴',
     count: 105881,
     formattedCount: '1,05,881',
     description: 'قرآن کریم کے منقوط حروف کے کل نقاط (Dots)',
