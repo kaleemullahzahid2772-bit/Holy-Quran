@@ -61,25 +61,25 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
     return { totalChars: chars, wordCount: words.length };
   }, [line.words]);
 
-  // Typography scale classes calibrated to line length (enlarged for optimal readability)
+  const isShortEndLine = wordCount <= 3;
+  const isCompactWords = totalChars > 85 || wordCount >= 10;
+
+  // Typography scale classes calibrated to line length (consistent and uniform across Mushaf)
   const fontSizeClass = useMemo(() => {
     if (totalChars > 115 || wordCount >= 14) {
       // Ultra-dense lines
-      return 'text-sm sm:text-base md:text-lg lg:text-[1.42rem]';
-    } else if (totalChars > 80 || wordCount >= 9) {
+      return 'text-sm sm:text-base md:text-lg lg:text-[1.48rem]';
+    } else if (totalChars > 85 || wordCount >= 10) {
       // Dense lines (standard full lines)
       return 'text-base sm:text-lg md:text-xl lg:text-[1.62rem]';
     } else if (totalChars >= 40) {
       // Normal lines
-      return 'text-lg sm:text-xl md:text-2xl lg:text-[1.82rem]';
+      return 'text-base sm:text-xl md:text-2xl lg:text-[1.72rem]';
     } else {
       // Short lines (e.g. short ayah endings)
-      return 'text-xl sm:text-2xl md:text-3xl lg:text-[2.1rem]';
+      return 'text-lg sm:text-xl md:text-2xl lg:text-[1.82rem]';
     }
   }, [totalChars, wordCount]);
-
-  const isSparseLine = wordCount <= 3;
-  const isCompactWords = totalChars > 80 || wordCount >= 9;
 
   // Auto-fit protection: Ensures line NEVER overflows the golden border
   const lineContainerRef = useRef<HTMLDivElement>(null);
@@ -92,7 +92,7 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
         const availableWidth = lineContainerRef.current.clientWidth;
         const requiredWidth = wordsContainerRef.current.scrollWidth;
         if (availableWidth > 0 && requiredWidth > availableWidth) {
-          const fitScale = Math.max(0.55, (availableWidth - 2) / requiredWidth);
+          const fitScale = Math.max(0.60, (availableWidth - 1) / requiredWidth);
           setScale(fitScale);
         } else if (scale !== 1) {
           setScale(1);
@@ -111,15 +111,18 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
       ref={lineContainerRef}
       className="w-full max-w-full relative flex items-center overflow-hidden leading-relaxed group transition-colors hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 rounded py-0.5 box-border"
     >
-      {/* Words container, ordered from Right to Left */}
+      {/* Words container, strictly ordered from Right to Left, fully justified edge-to-edge */}
       <div
         ref={wordsContainerRef}
-        className={`w-full flex items-center justify-center font-mushaf ${fontSizeClass} gap-x-1 sm:gap-x-1.5 md:gap-x-2`}
+        className={`w-full flex items-center font-mushaf ${fontSizeClass} ${
+          isShortEndLine ? 'justify-center gap-x-2 sm:gap-x-3' : 'justify-between'
+        }`}
         style={
           scale < 1
             ? {
                 transform: `scale(${scale})`,
-                transformOrigin: 'center center',
+                transformOrigin: 'right center',
+                width: `${100 / scale}%`,
               }
             : undefined
         }

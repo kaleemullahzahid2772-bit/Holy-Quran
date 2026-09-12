@@ -44,11 +44,11 @@ export const QuranPage: React.FC<QuranPageProps> = React.memo(({
     : (pageNumber ? String(pageNumber) : '');
 
   return (
-    <div className="w-full max-w-[820px] mx-auto my-2 p-1.5 sm:p-3 md:p-4 bg-[#fdfbf7] dark:bg-emerald-950/80 rounded-2xl shadow-xl border border-gold-400/40 select-none animate-fade-in box-border">
+    <div className="w-full max-w-[840px] mx-auto my-1.5 sm:my-2 p-1 sm:p-2 md:p-2.5 bg-[#fdfbf7] dark:bg-emerald-950/80 rounded-2xl shadow-xl border border-gold-400/40 select-none animate-fade-in box-border">
       {/* Outer Traditional Islamic Double Border */}
-      <div className="p-1.5 sm:p-2.5 md:p-3 rounded-xl border-2 border-gold-500/60 bg-[#fffefc] dark:bg-[#031d16]/90 shadow-inner box-border overflow-hidden">
+      <div className="p-1 sm:p-1.5 md:p-2 rounded-xl border-2 border-gold-500/60 bg-[#fffefc] dark:bg-[#031d16]/90 shadow-inner box-border overflow-hidden">
         {/* Inner Ornamental Border */}
-        <div className="p-1.5 sm:p-3 md:p-4 rounded-lg border border-gold-400/40 relative overflow-hidden box-border">
+        <div className="px-1.5 py-1 sm:px-2.5 sm:py-2 md:px-3 md:py-2.5 rounded-lg border border-gold-400/40 relative overflow-hidden box-border">
           
           {/* Top Mushaf Header (Surah name, Page Number, Juz) */}
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-gold-400/30 text-xs sm:text-sm font-quran text-emerald-900 dark:text-gold-200">

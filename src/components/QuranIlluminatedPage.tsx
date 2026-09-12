@@ -45,16 +45,17 @@ const IlluminatedLineRow: React.FC<{
   return (
     <div
       ref={containerRef}
-      className="flex-1 w-full flex items-center justify-center overflow-hidden transition-colors hover:bg-gold-500/10 rounded px-1"
+      className="flex-1 w-full flex items-center justify-between overflow-hidden transition-colors hover:bg-gold-500/10 rounded px-1"
     >
       <div
         ref={wordsRef}
-        className="w-full flex items-center justify-center font-mushaf text-[16px] sm:text-2xl md:text-[1.75rem] lg:text-[2.2rem] leading-normal gap-x-1.5 sm:gap-x-2 md:gap-x-3"
+        className="w-full flex items-center justify-between font-mushaf text-[16px] sm:text-2xl md:text-[1.75rem] lg:text-[2.2rem] leading-normal"
         style={
           scale < 1
             ? {
                 transform: `scale(${scale})`,
-                transformOrigin: 'center center',
+                transformOrigin: 'right center',
+                width: `${100 / scale}%`,
               }
             : undefined
         }
