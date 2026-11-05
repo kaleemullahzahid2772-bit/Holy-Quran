@@ -13,7 +13,8 @@ import {
   Minimize2,
   FileText,
   BookOpen,
-  BarChart2
+  BarChart2,
+  Search
 } from 'lucide-react';
 import { QuranDataService } from '../database/quranDataService';
 import { PageStatisticsPanel } from './PageStatisticsPanel';
@@ -23,13 +24,15 @@ import { NavigationModal } from './NavigationModal';
 import { PageDetailsModal } from './PageDetailsModal';
 import { DesktopSidebar } from './DesktopSidebar';
 import { QuranPage } from './QuranPage';
-import { QuranPageData, QuranWordData, PageStatistics, Bookmark } from '../types/quran';
+import { QuranPageData, QuranWordData, PageStatistics, Bookmark, AppSettings } from '../types/quran';
 
 interface QuranReaderProps {
   currentPage: number;
   onPageChange: (newPage: number) => void;
   theme: 'light' | 'warm-paper' | 'dark' | 'emerald';
   showStatisticsSetting: boolean;
+  onOpenSearch?: () => void;
+  settings?: AppSettings;
 }
 
 export const QuranReader: React.FC<QuranReaderProps> = ({
@@ -37,7 +40,10 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
   onPageChange,
   theme,
   showStatisticsSetting,
+  onOpenSearch,
+  settings: propSettings,
 }) => {
+  const settings = propSettings || QuranDataService.getSettings();
   const [zoom, setZoom] = useState<number>(1);
   const [distractionFree, setDistractionFree] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -65,7 +71,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
   // Even pages (2, 4, 6...) are Right-Hand pages in Arabic RTL
   // Odd pages (3, 5, 7...) are Left-Hand pages in Arabic RTL
   const rightPageNumber = currentPage === 1 ? 1 : (currentPage % 2 === 0 ? currentPage : currentPage - 1);
-  const leftPageNumber = currentPage === 1 ? null : (rightPageNumber + 1 <= 559 ? rightPageNumber + 1 : null);
+  const leftPageNumber = currentPage === 1 ? null : (rightPageNumber + 1 <= 604 ? rightPageNumber + 1 : null);
 
   // Digital Quran state for Right and Left pages
   const [pageData, setPageData] = useState<QuranPageData | null>(null);
@@ -177,11 +183,11 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
   const goToNextPage = () => {
     if (viewMode === 'dual' && currentPage >= 2) {
       const next = rightPageNumber + 2;
-      if (next <= 559) {
+      if (next <= 604) {
         onPageChange(next);
       }
     } else {
-      if (currentPage < 559) {
+      if (currentPage < 604) {
         onPageChange(currentPage + 1);
       }
     }
@@ -226,6 +232,9 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
         setIsTajweedModalOpen(true);
       } else if (e.key.toLowerCase() === 'b') {
         handleToggleBookmark();
+      } else if (e.key.toLowerCase() === 'f' || (e.ctrlKey && e.key.toLowerCase() === 'k')) {
+        e.preventDefault();
+        onOpenSearch?.();
       } else if (e.key.toLowerCase() === 's') {
         setIsSidebarOpen((prev) => !prev);
       } else if (e.key === 'Escape') {
@@ -307,8 +316,8 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
     >
       {/* Top Header Controls (Collapsible in distraction-free mode) */}
       {!distractionFree && (
-        <header className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 border-b border-gray-200/80 dark:border-gray-800/80 backdrop-blur-md px-3 py-2.5 shadow-sm">
-          <div className="max-w-3xl mx-auto flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 border-b border-gray-200/80 dark:border-gray-800/80 backdrop-blur-md px-3 py-2 shadow-sm">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
             {/* Left: Surah & Juz Information */}
             <button
               onClick={() => setIsNavModalOpen(true)}
@@ -392,6 +401,17 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
               >
                 <FileText size={18} />
               </button>
+
+              {/* Quran Universal Search */}
+              {onOpenSearch && (
+                <button
+                  onClick={onOpenSearch}
+                  className="p-2 text-amber-700 dark:text-gold-300 hover:bg-amber-50 dark:hover:bg-amber-950/50 rounded-xl transition-colors cursor-pointer"
+                  title="قرآنی تلاش (سورتیں، الفاظ، حروف، اعراب)"
+                >
+                  <Search size={18} />
+                </button>
+              )}
 
               <button
                 onClick={() => {
@@ -516,7 +536,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                 dir="rtl"
               >
                 {/* Right Page (Earlier Page in RTL, e.g. Page 2) */}
-                <div className="w-full lg:flex-1 max-w-[760px]">
+                <div className="w-full lg:flex-1 max-w-[700px]">
                   <QuranPage
                     pageData={pageData}
                     pageNumber={rightPageNumber}
@@ -528,6 +548,10 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                       setDetailsPageNumber(rightPageNumber);
                       setIsPageDetailsModalOpen(true);
                     }}
+                    showThematicColors={settings.showThematicColors ?? true}
+                    showTajweedColors={settings.showTajweedColors ?? true}
+                    showMarginalVocabulary={settings.showMarginalVocabulary ?? true}
+                    isDualMode={true}
                   />
                 </div>
 
@@ -540,7 +564,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
 
                 {/* Left Page (Next Page in RTL, e.g. Page 3) */}
                 {leftPageNumber && (
-                  <div className="w-full lg:flex-1 max-w-[760px]">
+                  <div className="w-full lg:flex-1 max-w-[700px]">
                     <QuranPage
                       pageData={leftPageData}
                       pageNumber={leftPageNumber}
@@ -552,6 +576,10 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                         setDetailsPageNumber(leftPageNumber);
                         setIsPageDetailsModalOpen(true);
                       }}
+                      showThematicColors={settings.showThematicColors ?? true}
+                      showTajweedColors={settings.showTajweedColors ?? true}
+                      showMarginalVocabulary={settings.showMarginalVocabulary ?? true}
+                      isDualMode={true}
                     />
                   </div>
                 )}
@@ -569,6 +597,10 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                   setDetailsPageNumber(currentPage);
                   setIsPageDetailsModalOpen(true);
                 }}
+                showThematicColors={settings.showThematicColors ?? true}
+                showTajweedColors={settings.showTajweedColors ?? true}
+                showMarginalVocabulary={settings.showMarginalVocabulary ?? true}
+                isDualMode={false}
               />
             )
           ) : (
@@ -617,36 +649,34 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
 
       {/* Page Navigation Floating Arrows for Touch / Desktop */}
       {!distractionFree && (
-        <div className="fixed bottom-20 left-0 right-0 z-20 pointer-events-none">
-          <div className="max-w-4xl mx-auto px-4 flex justify-between items-center">
-            {/* Next Page Button (Left in RTL is Next Page) */}
-            <button
-              onClick={goToNextPage}
-              disabled={currentPage >= 559}
-              className={`p-3 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg pointer-events-auto border border-gray-200/80 dark:border-gray-700 transition-all active:scale-95 ${
-                currentPage >= 559
-                  ? 'opacity-30 cursor-not-allowed'
-                  : 'hover:bg-emerald-50 dark:hover:bg-emerald-950 text-emerald-800 dark:text-emerald-200'
-              }`}
-              title="اگلا صفحہ (Next Page)"
-            >
-              <ChevronLeft size={22} />
-            </button>
+        <div className="fixed top-1/2 -translate-y-1/2 left-2 right-2 sm:left-4 sm:right-4 z-20 pointer-events-none flex justify-between items-center">
+          {/* Next Page Button (Left in RTL is Next Page) */}
+          <button
+            onClick={goToNextPage}
+            disabled={currentPage >= 604}
+            className={`p-2.5 sm:p-3 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg pointer-events-auto border border-gray-200/80 dark:border-gray-700 transition-all hover:scale-105 active:scale-95 ${
+              currentPage >= 604
+                ? 'opacity-20 cursor-not-allowed'
+                : 'hover:bg-amber-50 dark:hover:bg-amber-950/60 text-amber-800 dark:text-gold-300'
+            }`}
+            title="اگلا صفحہ (Next Page)"
+          >
+            <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+          </button>
 
-            {/* Previous Page Button (Right in RTL is Previous Page) */}
-            <button
-              onClick={goToPrevPage}
-              disabled={currentPage <= 1}
-              className={`p-3 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg pointer-events-auto border border-gray-200/80 dark:border-gray-700 transition-all active:scale-95 ${
-                currentPage <= 1
-                  ? 'opacity-30 cursor-not-allowed'
-                  : 'hover:bg-emerald-50 dark:hover:bg-emerald-950 text-emerald-800 dark:text-emerald-200'
-              }`}
-              title="پچھلا صفحہ (Previous Page)"
-            >
-              <ChevronRight size={22} />
-            </button>
-          </div>
+          {/* Previous Page Button (Right in RTL is Previous Page) */}
+          <button
+            onClick={goToPrevPage}
+            disabled={currentPage <= 1}
+            className={`p-2.5 sm:p-3 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg pointer-events-auto border border-gray-200/80 dark:border-gray-700 transition-all hover:scale-105 active:scale-95 ${
+              currentPage <= 1
+                ? 'opacity-20 cursor-not-allowed'
+                : 'hover:bg-amber-50 dark:hover:bg-amber-950/60 text-amber-800 dark:text-gold-300'
+            }`}
+            title="پچھلا صفحہ (Previous Page)"
+          >
+            <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+          </button>
         </div>
       )}
 

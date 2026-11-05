@@ -8,11 +8,15 @@ import {
   WordOccurrenceResult,
   WordTranslationResult,
   Surah,
-  Juz
+  Juz,
+  PageThematicData,
+  ThematicSubject
 } from '../types/quran';
 import { SURAHS_DATA } from '../data/surahsData';
 import { JUZ_DATA } from '../data/juzData';
 import { QURAN_WORD_DICTIONARY } from '../data/quranWordDictionary';
+import PAGE_THEMATIC_DATA_JSON from '../data/pageThematicData.json';
+import { THEMATIC_SUBJECTS, THEMATIC_SUBJECTS_LIST } from '../data/quranThematicData';
 
 const STORAGE_KEYS = {
   BOOKMARKS: 'quran_app_bookmarks_v2',
@@ -27,6 +31,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   showPageStatistics: true, // Default to true so user sees real page stats immediately
   fontSize: 'medium',
   keepScreenOn: false,
+  showThematicColors: true,
+  showTajweedColors: true,
+  showMarginalVocabulary: true,
 };
 
 // In-Memory Caches for Instant 0.1ms Performance
@@ -42,18 +49,18 @@ const getBasePath = (): string => {
 
 export class QuranDataService {
   /**
-   * Determine Surah for a given Mushaf page number (1 to 559)
+   * Determine Surah for a given Mushaf page number (1 to 604)
    */
   static getSurahForPage(pageNumber: number): Surah | null {
-    if (pageNumber < 2 || pageNumber > 549) return null;
+    if (pageNumber < 1 || pageNumber > 604) return null;
     return SURAHS_DATA.find((s) => pageNumber >= s.startPage && pageNumber <= s.endPage) || null;
   }
 
   /**
-   * Determine Juz (Para) for a given page number (1 to 559)
+   * Determine Juz (Para) for a given page number (1 to 604)
    */
   static getJuzForPage(pageNumber: number): Juz | null {
-    if (pageNumber < 2 || pageNumber > 549) return null;
+    if (pageNumber < 1 || pageNumber > 604) return null;
     return JUZ_DATA.find((j) => pageNumber >= j.startPage && pageNumber <= j.endPage) || null;
   }
 
@@ -61,16 +68,16 @@ export class QuranDataService {
    * Get reference page scan image path for comparison view
    */
   static getPageImagePath(pageNumber: number): string {
-    const clamped = Math.max(1, Math.min(559, pageNumber));
+    const clamped = Math.max(1, Math.min(604, pageNumber));
     const pStr = String(clamped).padStart(3, '0');
     return `${getBasePath()}pages/page_${pStr}.jpg`;
   }
 
   /**
-   * Load structured 16-line Page Data with caching
+   * Load structured 15-line Page Data with caching
    */
   static async getPageData(pageNumber: number): Promise<QuranPageData> {
-    const clamped = Math.max(1, Math.min(559, pageNumber));
+    const clamped = Math.max(1, Math.min(604, pageNumber));
     if (pagesCache[clamped]) {
       return pagesCache[clamped];
     }
@@ -87,8 +94,8 @@ export class QuranDataService {
       // Fallback empty page structure
       const emptyPage: QuranPageData = {
         pageNumber: clamped,
-        isQuranText: clamped >= 2 && clamped <= 549,
-        lines: Array.from({ length: 16 }, (_, i) => ({
+        isQuranText: clamped >= 1 && clamped <= 604,
+        lines: Array.from({ length: 15 }, (_, i) => ({
           lineNumber: i + 1,
           isHeader: false,
           words: []
@@ -99,13 +106,28 @@ export class QuranDataService {
   }
 
   /**
+   * Get thematic subjects and marginal vocabulary for a page (1 to 604)
+   */
+  static getPageThematicData(pageNumber: number): PageThematicData | null {
+    const clamped = Math.max(1, Math.min(604, pageNumber));
+    return (PAGE_THEMATIC_DATA_JSON as Record<string, PageThematicData>)[String(clamped)] || null;
+  }
+
+  /**
+   * Get all 7 Thematic Subjects
+   */
+  static getAllThematicSubjects(): ThematicSubject[] {
+    return THEMATIC_SUBJECTS_LIST;
+  }
+
+  /**
    * Normalize raw statistics from JSON or fallback into standard PageStatistics
    */
   static normalizePageStatistics(raw: any, pageNumber: number): PageStatistics {
     if (!raw) {
       return {
         pageNumber,
-        isQuranText: pageNumber >= 2 && pageNumber <= 549,
+        isQuranText: pageNumber >= 1 && pageNumber <= 604,
         totalWords: 0,
         totalLetters: 0,
         countFatha: 0,
@@ -131,7 +153,7 @@ export class QuranDataService {
 
     return {
       pageNumber: raw.pageNumber ?? pageNumber,
-      isQuranText: raw.isQuranText ?? (pageNumber >= 2 && pageNumber <= 549),
+      isQuranText: raw.isQuranText ?? (pageNumber >= 1 && pageNumber <= 604),
       totalWords: raw.totalWords ?? raw.wordCount ?? 0,
       totalLetters: raw.totalLetters ?? raw.letterCount ?? 0,
       countFatha: raw.countFatha ?? dCounts.fatha ?? 0,
@@ -214,7 +236,7 @@ export class QuranDataService {
    * Load real, calculated Page Statistics for a page
    */
   static async getPageStatistics(pageNumber: number): Promise<PageStatistics> {
-    const clamped = Math.max(1, Math.min(559, pageNumber));
+    const clamped = Math.max(1, Math.min(604, pageNumber));
 
     if (!pageStatsCache) {
       try {
@@ -237,7 +259,7 @@ export class QuranDataService {
     }
 
     // Dynamic Fallback: calculate directly from page data if text page
-    if (clamped >= 2 && clamped <= 549) {
+    if (clamped >= 1 && clamped <= 604) {
       try {
         const pageData = await QuranDataService.getPageData(clamped);
         const calculated = QuranDataService.calculatePageStatisticsFromData(pageData);

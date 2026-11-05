@@ -15,6 +15,7 @@ import {
 import { QuranWordData, WordOccurrenceResult, WordOccurrenceInstance, WordTranslationResult } from '../types/quran';
 import { QuranDataService } from '../database/quranDataService';
 import { JUZ_DATA } from '../data/juzData';
+import { THEMATIC_SUBJECTS } from '../data/quranThematicData';
 
 interface WordDetailsModalProps {
   word: QuranWordData | null;
@@ -170,6 +171,25 @@ export const WordDetailsModal: React.FC<WordDetailsModalProps> = ({
             <span>•</span>
             <span>سطر {word.line || '—'}</span>
           </div>
+
+          {/* Thematic Subject Topic (التفصيل الموضوعي) */}
+          {word.subjectTitleArabic && (
+            <div className="mt-2 flex items-center justify-center gap-1.5 flex-wrap">
+              <span
+                style={{
+                  backgroundColor: THEMATIC_SUBJECTS[word.subjectId || 'faith_tawheed']?.badgeBg,
+                }}
+                className="text-white text-[11px] font-bold px-3 py-0.5 rounded-full shadow-2xs font-mushaf"
+              >
+                موضوع: {word.subjectTitleArabic}
+              </span>
+              {word.subjectTitleUrdu && (
+                <span className="text-[10px] text-emerald-850 dark:text-emerald-300 font-sans font-medium">
+                  ({word.subjectTitleUrdu})
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Word Translation Card (Urdu & English) */}
           <div className="mt-3 p-3 rounded-2xl bg-white/90 dark:bg-gray-800/90 border border-emerald-100 dark:border-emerald-800/60 shadow-sm text-right">

@@ -7,6 +7,7 @@ interface QuranWordProps {
   onSelectWord: (word: QuranWordData) => void;
   isSelected?: boolean;
   isCompact?: boolean;
+  showTajweedColors?: boolean;
 }
 
 // The 6 non-connecting letters in Arabic (do not connect to following letter on the left)
@@ -49,11 +50,12 @@ export const QuranWord: React.FC<QuranWordProps> = React.memo(({
   onSelectWord,
   isSelected = false,
   isCompact = false,
+  showTajweedColors = true,
 }) => {
   // If this is an Ayah End Marker (e.g. ۝۱)
   if (word.isAyahMarker) {
     return (
-      <span className="inline-flex items-center justify-center mx-0.5 sm:mx-1 text-gold-600 dark:text-gold-400 font-mushaf text-[0.85em] select-none shrink-0">
+      <span className="inline-flex items-center justify-center mx-1 sm:mx-1.5 text-[#b45309] dark:text-[#f59e0b] font-mushaf text-[0.92em] select-none shrink-0 drop-shadow-2xs">
         {word.markerText}
       </span>
     );
@@ -61,7 +63,12 @@ export const QuranWord: React.FC<QuranWordProps> = React.memo(({
 
   // Pre-calculate connected segments while preserving complete Arabic cursive shaping
   const segments = React.useMemo(() => {
-    const defaultColor = '#1e293b';
+    const defaultColor = '#0f172a';
+
+    // If Tajweed coloring is disabled, render plain text
+    if (!showTajweedColors) {
+      return [{ text: word.text, color: defaultColor }];
+    }
 
     // Fast path: If word has no character rules or all default, return full authentic text
     if (!word.characters || word.characters.length === 0) {
@@ -133,7 +140,7 @@ export const QuranWord: React.FC<QuranWordProps> = React.memo(({
     }
 
     return finalSegments;
-  }, [word]);
+  }, [word, showTajweedColors]);
 
   return (
     <button
@@ -142,10 +149,10 @@ export const QuranWord: React.FC<QuranWordProps> = React.memo(({
         e.stopPropagation();
         onSelectWord(word);
       }}
-      className={`inline-block px-0.5 py-0.5 rounded cursor-pointer transition-all duration-150 active:scale-95 text-right font-mushaf select-none shrink-0 ${
+      className={`inline-block px-[1px] sm:px-0.5 py-0 rounded cursor-pointer transition-colors duration-150 text-right font-mushaf select-none shrink-0 ${
         isSelected
-          ? 'bg-gold-200/80 dark:bg-gold-900/60 ring-2 ring-gold-500 shadow-sm'
-          : 'hover:bg-emerald-500/15 dark:hover:bg-emerald-400/20'
+          ? 'bg-amber-300/80 dark:bg-amber-900/60 ring-2 ring-amber-500 shadow-xs'
+          : 'hover:bg-amber-500/10 dark:hover:bg-amber-400/15'
       }`}
       title={`${word.textClean} - کلک کریں`}
       dir="rtl"

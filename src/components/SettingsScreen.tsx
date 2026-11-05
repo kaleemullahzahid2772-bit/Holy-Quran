@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings as SettingsIcon, Sun, Moon, Palette, ShieldCheck, Database, Info, ExternalLink } from 'lucide-react';
+import { Settings as SettingsIcon, Moon, Sun, Sparkles, BookOpen, Database, ShieldCheck, Palette, BookMarked, Eye } from 'lucide-react';
 import { AppSettings } from '../types/quran';
 
 interface SettingsScreenProps {
@@ -13,21 +13,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onUpdateSettings,
   onOpenTajweedLegend,
 }) => {
-  const themes = [
-    { id: 'light', name: 'سفید (Light)', desc: 'Clean white background' },
-    { id: 'warm-paper', name: 'کاغذی (Warm Paper)', desc: 'Natural parchment tint' },
-    { id: 'dark', name: 'نائٹ موڈ (Dark)', desc: 'OLED eye-friendly dark' },
-    { id: 'emerald', name: 'زمردی (Emerald)', desc: 'Deep Islamic emerald' },
-  ] as const;
+  const themes: { id: AppSettings['theme']; name: string; desc: string }[] = [
+    { id: 'light', name: 'روشن (Clean Light)', desc: 'روایتی سفید پس منظر' },
+    { id: 'warm-paper', name: 'کاغذی (Warm Paper)', desc: 'قدرتی قدیم پرنٹ شدہ کاغذ' },
+    { id: 'emerald', name: 'زمردی (Emerald)', desc: 'پُرسکون اسلامی سبز رنگ' },
+    { id: 'dark', name: 'نائٹ موڈ (Night Dark)', desc: 'رات کے وقت آنکھوں کے لیے پرسکون' },
+  ];
 
   return (
-    <div className="min-h-screen pb-24 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-800 to-teal-900 text-white pt-8 pb-6 px-6 shadow-md">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-24 font-sans select-none" dir="rtl">
+      {/* Top Banner */}
+      <div className="bg-gradient-to-r from-emerald-850 via-emerald-800 to-teal-900 text-white p-6 shadow-md">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold font-quran">ترتیبات</h2>
-            <p className="text-xs text-emerald-200 mt-0.5">Application Settings & Info</p>
+            <h1 className="text-xl md:text-2xl font-bold font-mushaf">سیٹنگز و ترتیبات</h1>
+            <p className="text-xs text-emerald-200 mt-0.5">مصحف التفصيل الموضوعي • ترتیبات و اختیارات</p>
           </div>
           <div className="p-3 bg-white/10 rounded-2xl">
             <SettingsIcon size={24} className="text-gold-300" />
@@ -61,20 +61,81 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </div>
         </div>
 
-        {/* Reading Preferences */}
+        {/* Thematic & Color Options (الموضوعي والتجويد) */}
         <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-4">
           <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <SettingsIcon size={16} className="text-emerald-600" />
-            <span>مطالعہ کے آپشنز (Preferences)</span>
+            <Eye size={16} className="text-emerald-600" />
+            <span>رنگ و حاشیہ کے اختیارات (Thematic & Tajweed Toggles)</span>
           </h3>
 
+          {/* 1. Thematic Colors Toggle */}
           <div className="flex items-center justify-between py-1">
             <div>
               <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-                صفحہ کے اعداد و شمار دکھائیں (Show Statistics)
+                موضوعاتی رنگ بندی (Thematic Colors by Subject)
               </div>
               <div className="text-[11px] text-gray-400">
-                ہر صفحے کے نیچے شماریاتی پینل ظاہر کریں
+                دار الفجر کے 7 موضوعاتی پیسٹل رنگ آیات کے پس منظر میں ظاہر کریں
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.showThematicColors ?? true}
+              onChange={(e) =>
+                onUpdateSettings({ ...settings, showThematicColors: e.target.checked })
+              }
+              className="w-5 h-5 accent-emerald-600 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 2. Tajweed Colors Toggle */}
+          <div className="flex items-center justify-between py-1 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <div>
+              <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                حروف پر تجویدی رنگ (Tajweed Letter Rules)
+              </div>
+              <div className="text-[11px] text-gray-400">
+                مد، غنہ، قلقلہ، اخفاء اور تفخیم کے مستند کلر کوڈز
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.showTajweedColors ?? true}
+              onChange={(e) =>
+                onUpdateSettings({ ...settings, showTajweedColors: e.target.checked })
+              }
+              className="w-5 h-5 accent-emerald-600 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 3. Marginal Vocabulary Toggle */}
+          <div className="flex items-center justify-between py-1 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <div>
+              <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                حاشیہ معانی الکلمات (Marginal Vocabulary)
+              </div>
+              <div className="text-[11px] text-gray-400">
+                صفحے کے مشکل الفاظ کے معانی حاشیے میں عربی مع اردو ترجمہ دکھائیں
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.showMarginalVocabulary ?? true}
+              onChange={(e) =>
+                onUpdateSettings({ ...settings, showMarginalVocabulary: e.target.checked })
+              }
+              className="w-5 h-5 accent-emerald-600 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 4. Page Statistics Toggle */}
+          <div className="flex items-center justify-between py-1 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <div>
+              <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                صفحہ کے شماریاتی اعداد و شمار (Show Statistics)
+              </div>
+              <div className="text-[11px] text-gray-400">
+                ہر صفحے کے اعراب، حروف اور الفاظ کی گنتی کا پینل
               </div>
             </div>
             <input
@@ -92,7 +153,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               onClick={onOpenTajweedLegend}
               className="w-full py-2.5 px-4 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-bold flex items-center justify-between transition-colors"
             >
-              <span>تجویدی رنگوں کی مکمل فہرست دیکھیں</span>
+              <span>تجویدی رنگوں کی گائیڈ دیکھیں</span>
               <Palette size={16} />
             </button>
           </div>
@@ -102,22 +163,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
           <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 flex items-center gap-2 mb-2">
             <Database size={16} className="text-emerald-600" />
-            <span>ڈیٹا بیس آرکیٹیکچر (Step 5 Foundation)</span>
+            <span>مصحف آرکیٹیکچر (15-Line Madani Thematic)</span>
           </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
-            ریلیشنل اسکیمہ (<code className="text-[10px] bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">schema.sql</code>) تیار کر لیا گیا ہے:
-          </p>
 
           <div className="grid grid-cols-2 gap-2 text-[11px]">
             {[
-              'pages (559 pages)',
+              'pages (604 pages Madani)',
+              '15-line authentic Medina grid',
               'surahs (114 surahs)',
               'juz (30 paras)',
+              'thematic categories (7 themes)',
               'ayahs (6236 ayahs)',
-              'words (word-by-word)',
-              'word_characters',
-              'page_statistics',
-              'bookmarks & progress',
+              'words (word-by-word with Tajweed)',
+              'word occurrences & roots',
+              'marginal vocabulary (معانی الکلمات)',
+              'page statistics & diacritics',
             ].map((table, i) => (
               <div key={i} className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -127,25 +187,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </div>
         </div>
 
-        {/* About & Verification Credits */}
+        {/* Verification Credits */}
         <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-3">
           <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <ShieldCheck size={16} className="text-emerald-600" />
-            <span>صحتِ متن اور مستند ماخذ (Verification & Credits)</span>
+            <span>صحتِ متن اور مستند ماخذ (Verification & Sources)</span>
           </h3>
 
           <div className="text-xs text-gray-600 dark:text-gray-400 space-y-2 leading-relaxed">
             <p>
-              • <strong>بصری نسخہ:</strong> اقراء قرآن کمپنی کا مطبوعہ ۱۶ سطری رنگین تجویدی قرآن مجید۔
+              • <strong>موضوعاتی ماخذ:</strong> دار الفجر الاسلامی کا مستند "مصحف التفصيل الموضوعي مع تفسير كلمات القرآن"۔
             </p>
             <p>
-              • <strong>ڈیجیٹل ڈیٹاسیٹ مطابقت:</strong> Quran Foundation (QDC - Mushaf ID 7: INDOPAK_16_LINES)۔
+              • <strong>رسم الخط:</strong> مصحف مدینہ منورہ (مجمع الملک فہد)، ۱۵ سطری عثمانی رسم الخط، ۶۰۴ صفحات۔
             </p>
             <p>
-              • <strong>صحتِ متن ریفرنس:</strong> The Tanzil Project (tanzil.net) تحت Creative Commons Attribution License۔
-            </p>
-            <p className="text-emerald-700 dark:text-emerald-400 font-medium pt-1">
-              شرعی اصول: قرآن مجید کے متن میں کسی خودکار اے آئی یا غیر معتبر سورس سے کوئی لفظ یا اعراب شامل نہیں کیا گیا۔
+              • <strong>انٹرایکٹو فیچرز:</strong> ہر لفظ پر کلک سے روٹ ورڈ، تکرار، مکمل نحوی و صرفی تفصیلات اور موضوعاتی زمرہ محفوظ ہیں۔
             </p>
           </div>
         </div>

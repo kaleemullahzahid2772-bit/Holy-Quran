@@ -4,6 +4,53 @@ export interface QuranCharacterData {
   color: string; // e.g. '#16a34a' (green), '#0284c7' (blue), '#e11d48' (pink), '#ea580c' (orange), '#1e293b' (normal)
 }
 
+export type ThematicSubjectId =
+  | 'faith_tawheed'       // العقيدة ودلائل التوحيد والقدرة والإيمان
+  | 'prophets_stories'    // قصص الأنبياء والرسل وسير الأولين
+  | 'rulings_shariah'     // الأحكام والتشريعات والفرائض والعبادات
+  | 'judgement_day'       // أهوال القيامة والبعث والحساب والجزاء
+  | 'believers_paradise'  // صفات المؤمنين وجزاؤهم ونعيم الجنة والرحمة
+  | 'hypocrites_hellfire' // صفات المنافقين والكافرين ومصيرهم والنار
+  | 'wisdom_morals';      // الأمثال والحكم والآداب والمواعظ العامة
+
+export interface ThematicSubject {
+  id: ThematicSubjectId;
+  nameArabic: string;
+  nameUrdu: string;
+  nameEnglish: string;
+  descriptionUrdu: string;
+  colorLight: string;       // Soft pastel background
+  colorBorderLight: string;
+  colorDark: string;        // Dark mode background
+  colorBorderDark: string;
+  badgeBg: string;
+  badgeText: string;
+  iconName: string;
+}
+
+export interface MarginalWordMeaning {
+  word: string;
+  meaningArabic: string;
+  meaningUrdu: string;
+  surahNumber: number;
+  ayahNumber: number;
+}
+
+export interface PageSubjectRange {
+  subjectId: ThematicSubjectId;
+  titleArabic: string;
+  titleUrdu: string;
+  surahNumber: number;
+  fromAyah: number;
+  toAyah: number;
+}
+
+export interface PageThematicData {
+  pageNumber: number;
+  subjects: PageSubjectRange[];
+  vocabulary: MarginalWordMeaning[];
+}
+
 export interface QuranWordData {
   id: number;
   surah: number;
@@ -36,6 +83,9 @@ export interface QuranWordData {
   line?: number;
   isAyahMarker?: boolean;
   markerText?: string;
+  subjectId?: ThematicSubjectId;
+  subjectTitleArabic?: string;
+  subjectTitleUrdu?: string;
 }
 
 export interface QuranLineData {
@@ -47,6 +97,7 @@ export interface QuranLineData {
   totalAyahs?: number;
   revelationType?: string;
   includeBismillah?: boolean;
+  subjectId?: ThematicSubjectId;
   words: QuranWordData[];
 }
 
@@ -148,6 +199,9 @@ export interface AppSettings {
   showPageStatistics: boolean;
   fontSize: 'small' | 'medium' | 'large';
   keepScreenOn: boolean;
+  showThematicColors: boolean;
+  showTajweedColors: boolean;
+  showMarginalVocabulary: boolean;
 }
 
 export interface WordTranslationResult {

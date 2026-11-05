@@ -8,6 +8,7 @@ import { DesktopNavbar } from './components/DesktopNavbar';
 import { NavigationModal } from './components/NavigationModal';
 import { TajweedLegendModal } from './components/TajweedLegendModal';
 import { QuranStatsModal } from './components/QuranStatsModal';
+import { SearchModal } from './components/SearchModal';
 import { QuranDataService } from './database/quranDataService';
 import { AppSettings, Bookmark, ReadingProgress } from './types/quran';
 
@@ -27,7 +28,7 @@ export function App() {
     try {
       const params = new URLSearchParams(window.location.search);
       const p = parseInt(params.get('page') || '', 10);
-      if (p >= 1 && p <= 559) return p;
+      if (p >= 1 && p <= 604) return p;
     } catch (e) {}
     return readingProgress.lastPageNumber || 2;
   };
@@ -37,9 +38,25 @@ export function App() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(QuranDataService.getBookmarks());
   
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
-  const [navInitialTab, setNavInitialTab] = useState<'surahs' | 'juz' | 'pages'>('surahs');
+  const [navInitialTab, setNavInitialTab] = useState<'surahs' | 'juz' | 'pages' | 'themes'>('surahs');
   const [isTajweedModalOpen, setIsTajweedModalOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
+  // Global Ctrl+K / / shortcut to open search
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      if ((e.ctrlKey && e.key.toLowerCase() === 'k') || e.key === '/') {
+        e.preventDefault();
+        setIsSearchModalOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   // Apply Theme to DOM
   useEffect(() => {
@@ -53,7 +70,7 @@ export function App() {
 
   // Handle Page Change
   const handlePageChange = (newPage: number) => {
-    const clamped = Math.max(1, Math.min(559, newPage));
+    const clamped = Math.max(1, Math.min(604, newPage));
     setCurrentPage(clamped);
     QuranDataService.saveReadingProgress(clamped);
     setReadingProgress(QuranDataService.getReadingProgress());
@@ -69,7 +86,7 @@ export function App() {
   };
 
   // Open Navigation modal with specific tab
-  const handleOpenNavigation = (tab: 'surahs' | 'juz' | 'pages') => {
+  const handleOpenNavigation = (tab: 'surahs' | 'juz' | 'pages' | 'themes') => {
     setNavInitialTab(tab);
     setIsNavModalOpen(true);
   };
@@ -104,6 +121,7 @@ export function App() {
         settings={settings}
         onUpdateSettings={handleUpdateSettings}
         onOpenQuranStatistics={() => setIsStatsModalOpen(true)}
+        onOpenSearch={() => setIsSearchModalOpen(true)}
       />
 
       {/* Active Screen View */}
@@ -115,6 +133,8 @@ export function App() {
           onOpenTajweedLegend={() => setIsTajweedModalOpen(true)}
           onOpenBookmarks={() => setActiveTab('bookmarks')}
           onOpenQuranStatistics={() => setIsStatsModalOpen(true)}
+          onOpenSearch={() => setIsSearchModalOpen(true)}
+          settings={settings}
         />
       )}
 
@@ -124,6 +144,8 @@ export function App() {
           onPageChange={handlePageChange}
           theme={settings.theme}
           showStatisticsSetting={settings.showPageStatistics}
+          onOpenSearch={() => setIsSearchModalOpen(true)}
+          settings={settings}
         />
       )}
 
@@ -143,6 +165,15 @@ export function App() {
           onOpenTajweedLegend={() => setIsTajweedModalOpen(true)}
         />
       )}
+
+      {/* Global Universal Quran Search Modal (Letters, Words, Surahs, Juz, Occurrences) */}
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        onSelectPage={(page) => {
+          handleOpenQuran(page);
+        }}
+      />
 
       {/* Global Navigation Modal (Surahs, Paras, Page Jump) */}
       <NavigationModal
@@ -176,6 +207,7 @@ export function App() {
             setBookmarks(QuranDataService.getBookmarks());
           }
         }}
+        onOpenSearch={() => setIsSearchModalOpen(true)}
       />
     </div>
   );

@@ -4,6 +4,30 @@
 
 /* Authentic Open Font License Quranic Fonts */
 @font-face {
+  font-family: 'KFGQPC Uthmanic Script HAFS';
+  src: url('/fonts/UthmanicHafs1-Ver09.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Uthman Taha Naskh';
+  src: url('/fonts/UthmanTN1-Ver10.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amiri Quran';
+  src: url('/fonts/AmiriQuran-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Scheherazade New';
   src: url('/fonts/ScheherazadeNew-Regular.ttf') format('truetype');
   font-weight: normal;
@@ -50,7 +74,7 @@
 
 /* Quranic Typography with Full OpenType Arabic Shaping & Ligatures */
 .font-mushaf {
-  font-family: 'Scheherazade New', 'Amiri Quran', 'Amiri', 'Noto Naskh Arabic', serif;
+  font-family: 'KFGQPC Uthmanic Script HAFS', 'Uthman Taha Naskh', 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
   font-feature-settings: "cv01" on, "cv02" on, "liga" on, "calt" on, "mkmk" on, "mark" on, "ccmp" on;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -58,7 +82,7 @@
 }
 
 .font-quran {
-  font-family: 'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif;
+  font-family: 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
   font-feature-settings: "liga" on, "mkmk" on, "mark" on;
 }
 

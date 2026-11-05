@@ -5,7 +5,7 @@ import { QuranWord } from './QuranWord';
 
 interface QuranIlluminatedPageProps {
   pageData: QuranPageData;
-  pageNumber: 2 | 3;
+  pageNumber: 1 | 2;
   surah: Surah | null;
   juz: Juz | null;
   onSelectWord: (word: QuranWordData) => void;
@@ -13,7 +13,7 @@ interface QuranIlluminatedPageProps {
   onOpenPageDetails?: () => void;
 }
 
-// Sub-component for an individual line inside the illuminated 6-line grid
+// Sub-component for an individual line inside the illuminated grid
 const IlluminatedLineRow: React.FC<{
   line: QuranLineData;
   onSelectWord: (word: QuranWordData) => void;
@@ -86,20 +86,20 @@ export const QuranIlluminatedPage: React.FC<QuranIlluminatedPageProps> = React.m
   selectedWordId,
   onOpenPageDetails,
 }) => {
-  const isPage2 = pageNumber === 2;
-  const frameSrc = isPage2 ? '/images/frame_page_002.jpg' : '/images/frame_page_003.jpg';
-  const aspectClass = isPage2 ? 'aspect-[1059/1670]' : 'aspect-[1067/1670]';
+  const isPage1 = pageNumber === 1;
+  const frameSrc = isPage1 ? '/images/frame_page_002.jpg' : '/images/frame_page_003.jpg';
+  const aspectClass = isPage1 ? 'aspect-[1059/1670]' : 'aspect-[1067/1670]';
 
-  // Extract the 6 non-empty text lines (skip header lines and empty padded lines)
+  // Extract non-header text lines
   const textLines = pageData.lines.filter((l) => !l.isHeader && l.words && l.words.length > 0).slice(0, 6);
 
   // Surah Header metadata
-  const surahHeaderTitle = isPage2 ? 'سُوْرَةُ الْفَاتِحَةِ مَكِّيَّةٌ' : 'سُوْرَةُ الْبَقَرَةِ مَدَنِيَّةٌ';
-  const surahHeaderSubtitle = isPage2 ? 'آيَاتُهَا ٧  -  رُكُوْعُهَا ١' : 'آيَاتُهَا ۲۸۶  -  رُكُوْعَاتُهَا ۴۰';
+  const surahHeaderTitle = isPage1 ? 'سُوْرَةُ الفَاتِحَةِ مَكِّيَّةٌ' : 'سُوْرَةُ البَقَرَةِ مَدَنِيَّةٌ';
+  const surahHeaderSubtitle = isPage1 ? 'آيَاتُهَا ٧' : 'آيَاتُهَا ۲۸۶';
 
   return (
     <div className="w-full max-w-[760px] mx-auto my-2 select-none animate-fade-in box-border">
-      {/* Outer Container with exact aspect ratio of the authentic scanned page */}
+      {/* Outer Container with exact aspect ratio of the authentic illuminated page */}
       <div className={`relative w-full ${aspectClass} rounded-2xl shadow-2xl border-2 border-gold-500/60 overflow-hidden bg-[#fbf9f2] dark:brightness-95`}>
         {/* Authentic Illuminated Floral Border Background Image */}
         <img
@@ -144,14 +144,14 @@ export const QuranIlluminatedPage: React.FC<QuranIlluminatedPageProps> = React.m
             </h1>
           </div>
 
-          {/* 3. The 6-Line Quran Text Grid */}
+          {/* 3. The Quran Text Grid */}
           <div
             className="absolute flex flex-col justify-between box-border py-1"
             style={{
               top: '32.0%',
               height: '48.8%',
-              left: isPage2 ? '14.8%' : '14.1%',
-              right: isPage2 ? '15.2%' : '15.8%',
+              left: isPage1 ? '14.8%' : '14.1%',
+              right: isPage1 ? '15.2%' : '15.8%',
             }}
           >
             {textLines.map((line, idx) => (
@@ -183,7 +183,7 @@ export const QuranIlluminatedPage: React.FC<QuranIlluminatedPageProps> = React.m
                   onOpenPageDetails();
                 }}
                 className="flex items-center gap-1 px-2.5 py-0.5 bg-emerald-900/80 hover:bg-emerald-800 text-gold-200 rounded-full text-[10px] sm:text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 border border-gold-400/40 cursor-pointer"
-                title={`صفحہ ${pageNumber} کے مکمل اعداد و شمار دیکھیں`}
+                title={`صفحہ ${pageNumber} کے اعداد و شمار`}
               >
                 <BarChart2 size={11} className="text-gold-300" />
                 <span>تفصیلات</span>

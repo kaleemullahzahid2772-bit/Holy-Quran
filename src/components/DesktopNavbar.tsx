@@ -9,7 +9,8 @@ import {
   Minimize,
   Palette,
   ArrowRight,
-  BarChart2
+  BarChart2,
+  Search
 } from 'lucide-react';
 import { ReadingProgress, AppSettings } from '../types/quran';
 
@@ -20,6 +21,7 @@ interface DesktopNavbarProps {
   onPageChange: (page: number) => void;
   onOpenNavigationModal: () => void;
   onOpenQuranStatistics?: () => void;
+  onOpenSearch?: () => void;
   readingProgress: ReadingProgress;
   settings: AppSettings;
   onUpdateSettings: (settings: AppSettings) => void;
@@ -32,6 +34,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
   onPageChange,
   onOpenNavigationModal,
   onOpenQuranStatistics,
+  onOpenSearch,
   readingProgress,
   settings,
   onUpdateSettings,
@@ -42,7 +45,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
   const handleJumpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const p = parseInt(jumpPageInput, 10);
-    if (!isNaN(p) && p >= 1 && p <= 559) {
+    if (!isNaN(p) && p >= 1 && p <= 604) {
       onPageChange(p);
       setActiveTab('quran');
       setJumpPageInput('');
@@ -137,8 +140,8 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
               <input
                 type="number"
                 min="1"
-                max="559"
-                placeholder="صفحہ (1-559)"
+                max="604"
+                placeholder="صفحہ (1-604)"
                 value={jumpPageInput}
                 onChange={(e) => setJumpPageInput(e.target.value)}
                 className="w-28 pl-2 pr-7 py-1.5 text-xs bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800 dark:text-gray-200 font-sans text-right"
@@ -152,6 +155,18 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
               </button>
             </div>
           </form>
+
+          {/* Quran Universal Search Trigger */}
+          {onOpenSearch && (
+            <button
+              onClick={onOpenSearch}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900 text-amber-900 dark:text-gold-200 border border-amber-200 dark:border-amber-700/60 text-xs font-semibold transition-colors cursor-pointer"
+              title="قرآنی تلاش (سورتیں، الفاظ، حروف، اعراب)"
+            >
+              <Search size={15} />
+              <span className="hidden lg:inline">تلاش (Search)</span>
+            </button>
+          )}
 
           {/* Surah / Para Index Modal Trigger */}
           <button

@@ -2,3 +2,7 @@ node_modules
 dist
 .DS_Store
 *.local
+scripts/cache_604/
+page_n16_scan.jpg
+page_n9_preview.jpg
+

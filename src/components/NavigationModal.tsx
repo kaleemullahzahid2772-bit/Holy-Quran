@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { X, Search, Compass, BookOpen, Hash, ArrowRight } from 'lucide-react';
+import { X, Search, BookOpen, Layers, Hash, ArrowRight, Palette, Compass } from 'lucide-react';
 import { SURAHS_DATA } from '../data/surahsData';
 import { JUZ_DATA } from '../data/juzData';
+import { THEMATIC_SUBJECTS_LIST, THEMATIC_PASSAGES } from '../data/quranThematicData';
+import { ThematicSubjectId } from '../types/quran';
 
 interface NavigationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectPage: (pageNumber: number) => void;
-  initialTab?: 'surahs' | 'juz' | 'pages';
+  onSelectPage: (page: number) => void;
+  initialTab?: 'surahs' | 'juz' | 'pages' | 'themes';
   currentPage: number;
 }
 
@@ -18,9 +20,10 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
   initialTab = 'surahs',
   currentPage,
 }) => {
-  const [activeTab, setActiveTab] = useState<'surahs' | 'juz' | 'pages'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'surahs' | 'juz' | 'pages' | 'themes'>(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
   const [targetPageInput, setTargetPageInput] = useState('');
+  const [selectedThemeId, setSelectedThemeId] = useState<ThematicSubjectId | 'all'>('all');
 
   if (!isOpen) return null;
 
@@ -41,60 +44,77 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
   const handlePageJump = (e: React.FormEvent) => {
     e.preventDefault();
     const page = parseInt(targetPageInput, 10);
-    if (!isNaN(page) && page >= 1 && page <= 559) {
+    if (!isNaN(page) && page >= 1 && page <= 604) {
       onSelectPage(page);
       onClose();
     }
   };
 
+  // Filtered Passages by selected theme
+  const filteredPassages = THEMATIC_PASSAGES.filter(p => {
+    if (selectedThemeId === 'all') return true;
+    return p.subjectId === selectedThemeId;
+  });
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-gray-900 border border-emerald-200 dark:border-emerald-800 rounded-3xl max-w-md w-full h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Modal Top Bar */}
-        <div className="px-5 py-4 bg-gradient-to-r from-emerald-800 to-teal-900 text-white flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Compass size={20} className="text-gold-300" />
-            <h3 className="font-bold text-base">قرآنی نیویگیشن (Navigation)</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in select-none">
+      <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[85vh] overflow-hidden">
+        
+        {/* Modal Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+          <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-400">
+            <BookOpen size={20} />
+            <h3 className="font-bold text-base">قرآن مجید کی فہرست و تلاش</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+            className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Tab Selector */}
-        <div className="flex border-b border-gray-200 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/60 p-1.5 gap-1">
+        {/* 4 Tabs: Surahs, Juz, Pages, Themes */}
+        <div className="flex p-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800 gap-1 text-[11px] sm:text-xs">
           <button
             onClick={() => setActiveTab('surahs')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-2 rounded-xl font-bold transition-all ${
               activeTab === 'surahs'
                 ? 'bg-emerald-700 text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
-            سورتیں (Surahs)
+            سورتیں
           </button>
           <button
             onClick={() => setActiveTab('juz')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-2 rounded-xl font-bold transition-all ${
               activeTab === 'juz'
                 ? 'bg-emerald-700 text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
-            پارے (Paras / Juz)
+            پارے (Juz)
+          </button>
+          <button
+            onClick={() => setActiveTab('themes')}
+            className={`flex-1 py-2 rounded-xl font-bold transition-all ${
+              activeTab === 'themes'
+                ? 'bg-emerald-700 text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+            }`}
+          >
+            موضوعات (Themes)
           </button>
           <button
             onClick={() => setActiveTab('pages')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-2 rounded-xl font-bold transition-all ${
               activeTab === 'pages'
                 ? 'bg-emerald-700 text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
-            صفحہ نمبر (Page)
+            صفحہ نمبر
           </button>
         </div>
 
@@ -138,17 +158,17 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                       <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">
                         {surah.nameEnglish}
                       </div>
-                      <div className="text-[11px] text-gray-400">
+                      <div className="text-[10px] text-gray-400">
                         {surah.revelationType === 'Makki' ? 'مکی' : 'مدنی'} • {surah.totalAyahs} آیات
                       </div>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <div className="text-lg font-bold font-quran text-gray-900 dark:text-gray-100">
+                    <div className="font-mushaf font-bold text-base text-emerald-900 dark:text-gold-300">
                       {surah.nameArabic}
                     </div>
-                    <div className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold font-sans">
+                    <div className="text-[11px] text-gray-500 dark:text-gray-400">
                       صفحہ {surah.startPage}
                     </div>
                   </div>
@@ -158,7 +178,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
           </div>
         )}
 
-        {/* Tab 2: Juz List */}
+        {/* Tab 2: Juz (Paras) List */}
         {activeTab === 'juz' && (
           <div className="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
             {JUZ_DATA.map((juz) => (
@@ -168,32 +188,32 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                   onSelectPage(juz.startPage);
                   onClose();
                 }}
-                className={`w-full px-4 py-3.5 flex items-center justify-between hover:bg-emerald-50/60 dark:hover:bg-emerald-950/40 transition-colors text-right ${
+                className={`w-full px-4 py-3 flex items-center justify-between hover:bg-emerald-50/60 dark:hover:bg-emerald-950/40 transition-colors ${
                   currentPage >= juz.startPage && currentPage <= juz.endPage
                     ? 'bg-emerald-50 dark:bg-emerald-950/60 border-r-4 border-emerald-600'
                     : ''
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/50 text-teal-800 dark:text-teal-300 flex items-center justify-center text-xs font-bold font-sans">
+                  <span className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 flex items-center justify-center text-xs font-bold font-sans">
                     {juz.number}
                   </span>
                   <div className="text-left">
                     <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-                      {juz.nameEnglish}
-                    </div>
-                    <div className="text-[11px] text-gray-400">
                       پارہ {juz.number}
+                    </div>
+                    <div className="text-[10px] text-gray-400">
+                      صفحات {juz.startPage} تا {juz.endPage}
                     </div>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-lg font-bold font-quran text-gray-900 dark:text-gray-100">
+                  <div className="font-mushaf font-bold text-base text-emerald-900 dark:text-gold-300">
                     {juz.nameArabic}
                   </div>
-                  <div className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold font-sans">
-                    صفحہ {juz.startPage}
+                  <div className="text-[11px] text-gray-500 dark:text-gray-400">
+                    {juz.nameUrdu}
                   </div>
                 </div>
               </button>
@@ -201,16 +221,94 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
           </div>
         )}
 
-        {/* Tab 3: Direct Page Number Jump */}
+        {/* Tab 3: Themes (الموضوعات - Thematic Classification) */}
+        {activeTab === 'themes' && (
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Thematic Category Chips */}
+            <div className="p-2 border-b border-gray-100 dark:border-gray-800 flex gap-1.5 overflow-x-auto scrollbar-none">
+              <button
+                onClick={() => setSelectedThemeId('all')}
+                className={`px-3 py-1 rounded-full text-xs font-bold shrink-0 transition-all ${
+                  selectedThemeId === 'all'
+                    ? 'bg-emerald-800 text-white shadow-sm'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                }`}
+              >
+                تمام موضوعات
+              </button>
+              {THEMATIC_SUBJECTS_LIST.map(theme => (
+                <button
+                  key={theme.id}
+                  onClick={() => setSelectedThemeId(theme.id)}
+                  style={{
+                    backgroundColor: selectedThemeId === theme.id ? theme.badgeBg : undefined,
+                    color: selectedThemeId === theme.id ? '#ffffff' : undefined
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs font-bold shrink-0 transition-all ${
+                    selectedThemeId === theme.id
+                      ? 'shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                  }`}
+                >
+                  {theme.nameUrdu.split('،')[0]}
+                </button>
+              ))}
+            </div>
+
+            {/* Passages List */}
+            <div className="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 p-2 space-y-1.5">
+              {filteredPassages.map((p, idx) => {
+                const surah = SURAHS_DATA.find(s => s.number === p.surah);
+                const themeMeta = THEMATIC_SUBJECTS_LIST.find(t => t.id === p.subjectId);
+                const targetPage = surah ? surah.startPage : 1;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      onSelectPage(targetPage);
+                      onClose();
+                    }}
+                    className="w-full p-2.5 rounded-2xl border border-gray-200/60 dark:border-gray-800 hover:border-emerald-500/50 bg-white dark:bg-gray-850 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/30 transition-all text-right flex items-center justify-between gap-2 shadow-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        style={{ backgroundColor: themeMeta?.badgeBg }}
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                      />
+                      <span className="text-[11px] font-sans font-bold text-gray-400 dark:text-gray-500">
+                        صفحہ {targetPage}
+                      </span>
+                    </div>
+
+                    <div className="text-right flex-1 pr-1">
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 font-mushaf">
+                        {p.titleArabic}
+                      </div>
+                      <div className="text-[11px] text-emerald-800 dark:text-emerald-300 font-sans mt-0.5">
+                        {p.titleUrdu}
+                      </div>
+                      <div className="text-[10px] text-gray-400 mt-0.5 font-sans">
+                        {surah ? surah.nameArabic : ''} • الآيات {p.fromAyah} تا {p.toAyah}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 4: Direct Page Jump (1 to 604) */}
         {activeTab === 'pages' && (
-          <div className="flex-1 p-6 flex flex-col items-center justify-center text-center">
-            <div className="p-4 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded-3xl mb-4">
-              <BookOpen size={36} />
+          <div className="p-6 flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 rounded-3xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-4">
+              <Hash size={32} />
             </div>
 
             <h4 className="font-bold text-lg text-gray-900 dark:text-gray-100">براہِ راست صفحہ پر جائیں</h4>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs">
-              مصحف کے ۱ سے ۵۵۹ تک کسی بھی صفحہ نمبر پر جائیں۔ (اصل قرآنی متن صفحہ ۲ تا ۵۴۹ ہے)۔
+              مصحف التفصيل الموضوعي کے ۱ سے ۶۰۴ تک کسی بھی صفحہ نمبر پر جائیں۔
             </p>
 
             <form onSubmit={handlePageJump} className="w-full max-w-xs mt-6 space-y-4">
@@ -219,7 +317,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                 <input
                   type="number"
                   min={1}
-                  max={559}
+                  max={604}
                   placeholder="مثلاً: 25"
                   value={targetPageInput}
                   onChange={(e) => setTargetPageInput(e.target.value)}
@@ -238,7 +336,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
             </form>
 
             <div className="mt-6 flex flex-wrap gap-2 justify-center max-w-xs">
-              {[2, 3, 21, 46, 75, 147, 255, 397, 529, 548].map((quickPage) => (
+              {[1, 2, 22, 50, 77, 106, 282, 397, 582, 604].map((quickPage) => (
                 <button
                   key={quickPage}
                   onClick={() => {

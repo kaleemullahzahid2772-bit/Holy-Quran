@@ -142,5 +142,5 @@ export const QURAN_GENERAL_STATISTICS: QuranGeneralStatistic[] = [
   { labelUrdu: 'کل آیاتِ مبارکہ', labelEng: 'Total Verses', value: '6,236', badge: 'کوئی 6,666 روایات' },
   { labelUrdu: 'کل کلمات / الفاظ', labelEng: 'Total Words', value: '~ 77,430', badge: 'قرآنی کلمات' },
   { labelUrdu: 'کل سجدہ تلاوت', labelEng: 'Total Sajdahs', value: '14', badge: '۱۴ سجدے' },
-  { labelUrdu: 'کل صفحات (۱۶ سطری)', labelEng: 'Mushaf Pages', value: '559', badge: '۱۶ سطری مصحف' },
+  { labelUrdu: 'کل صفحات (۱۵ سطری عثمانی)', labelEng: 'Mushaf Pages', value: '604', badge: '۱۵ سطری عثمانی مصحف' },
 ];
