@@ -2,10 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Authentic Open Font License Quranic Fonts */
+/* Authentic King Fahd Glorious Quran Printing Complex (KFGQPC) Fonts */
+@font-face {
+  font-family: 'KFGQPC HAFS Uthmanic Script';
+  src: url('/fonts/uthmanic_hafs_v22.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'KFGQPC Uthmanic Script HAFS';
-  src: url('/fonts/UthmanicHafs1-Ver09.otf') format('opentype');
+  src: url('/fonts/uthmanic_hafs_v22.ttf') format('truetype'),
+       url('/fonts/UthmanicHafs1-Ver09.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -13,7 +22,8 @@
 
 @font-face {
   font-family: 'Uthman Taha Naskh';
-  src: url('/fonts/UthmanTN1-Ver10.woff2') format('woff2');
+  src: url('/fonts/UthmanTN1B-Ver10.woff2') format('woff2'),
+       url('/fonts/UthmanTN1-Ver10.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -22,6 +32,15 @@
 @font-face {
   font-family: 'Amiri Quran';
   src: url('/fonts/AmiriQuran-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Authentic Jameel Noori Nastaleeq Font for Urdu Translations & Meanings */
+@font-face {
+  font-family: 'Jameel Noori Nastaleeq';
+  src: url('/fonts/JameelNooriNastaleeq-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -74,16 +93,29 @@
 
 /* Quranic Typography with Full OpenType Arabic Shaping & Ligatures */
 .font-mushaf {
-  font-family: 'KFGQPC Uthmanic Script HAFS', 'Uthman Taha Naskh', 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'KFGQPC Uthmanic Script HAFS', 'Uthman Taha Naskh', 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
   font-feature-settings: "cv01" on, "cv02" on, "liga" on, "calt" on, "mkmk" on, "mark" on, "ccmp" on;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
   text-rendering: optimizeLegibility;
+  direction: rtl;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .font-quran {
-  font-family: 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
+  font-family: 'KFGQPC HAFS Uthmanic Script', 'KFGQPC Uthmanic Script HAFS', 'Uthman Taha Naskh', 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
   font-feature-settings: "liga" on, "mkmk" on, "mark" on;
+  direction: rtl;
+}
+
+/* Authentic Urdu Nastaleeq Typography */
+.font-urdu {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+  direction: rtl;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Authentic Mushaf Page Shadows & Border styling */

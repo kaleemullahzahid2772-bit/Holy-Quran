@@ -65,7 +65,7 @@ export const QuranMarginalPanel: React.FC<QuranMarginalPanelProps> = ({
                 {item.meaningArabic}
               </div>
               {item.meaningUrdu && (
-                <div className="text-[11px] text-gray-700 dark:text-gray-300 font-sans mt-1 pt-1 border-t border-gray-100 dark:border-gray-800">
+                <div className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-urdu leading-[2.0] mt-1 pt-1 border-t border-gray-100 dark:border-gray-800 text-right" dir="rtl">
                   {item.meaningUrdu}
                 </div>
               )}

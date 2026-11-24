@@ -84,7 +84,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
   ] as const;
 
   return (
-    <header className="hidden md:block sticky top-0 z-40 bg-white/95 dark:bg-emerald-950/95 backdrop-blur-md border-b border-gold-400/30 dark:border-emerald-800/80 shadow-sm transition-colors select-none">
+    <header className="hidden md:block sticky top-0 z-40 bg-white/95 dark:bg-emerald-950/95 backdrop-blur-md border-b border-gold-400/30 dark:border-emerald-800/80 shadow-sm transition-colors select-none w-full max-w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between gap-4">
         
         {/* Left: Brand / Title */}

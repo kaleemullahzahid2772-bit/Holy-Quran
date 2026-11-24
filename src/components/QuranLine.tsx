@@ -16,13 +16,12 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
   onSelectWord,
   selectedWordId,
   showThematicColors = true,
-  showTajweedColors = true,
 }) => {
   // 1. Surah Title Banner Line (Authentic Gilded Islamic Frame)
   if (line.isHeader && line.headerType === 'surah_title') {
     return (
       <div className="w-full my-1 sm:my-1.5 py-1 sm:py-1.5 px-2.5 sm:px-4 bg-gradient-to-r from-[#b48a3c] via-[#d4af37] to-[#b48a3c] text-white rounded-lg border-2 border-[#8c6b2d] shadow-sm flex items-center justify-between font-mushaf select-none relative overflow-hidden">
-        {/* Subtle geometric islamic pattern overlay */}
+        {/* Subtle geometric pattern overlay */}
         <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:8px_8px]" />
         
         {/* Right side (RTL Start): Ayahs count & Revelation */}
@@ -48,8 +47,8 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
   // 2. Bismillah Banner Line
   if (line.isHeader && line.headerType === 'bismillah') {
     return (
-      <div className="w-full my-0.5 sm:my-1 py-0.5 sm:py-1 text-center font-mushaf text-base sm:text-xl md:text-2xl font-bold text-[#1a1a1a] dark:text-gold-200 select-none tracking-wide">
-        بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+      <div className="w-full my-1 py-0.5 sm:py-1 text-center font-mushaf text-lg sm:text-2xl md:text-3xl font-bold text-[#000000] dark:text-gold-200 select-none tracking-wide">
+        بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
       </div>
     );
   }
@@ -63,18 +62,31 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
     );
   }
 
-  const wordCount = (line.words || []).length;
-  const isShortEndLine = wordCount <= 3;
+  // Deduplicate any repeated Ayah markers on the same line
+  const filteredWords = useMemo(() => {
+    const words = line.words || [];
+    const seenMarkers = new Set<string>();
+    return words.filter((w) => {
+      if (!w.isAyahMarker) return true;
+      const key = `${w.surah}:${w.ayah}`;
+      if (seenMarkers.has(key)) return false;
+      seenMarkers.add(key);
+      return true;
+    });
+  }, [line.words]);
+
+  const wordCount = filteredWords.length;
+  const isShortEndLine = wordCount <= 4;
 
   // Group consecutive words by thematic subject
   const thematicGroups = useMemo(() => {
     if (!showThematicColors) {
-      return [{ subjectId: undefined, words: line.words || [] }];
+      return [{ subjectId: undefined, words: filteredWords }];
     }
     const groups: { subjectId?: ThematicSubjectId; words: QuranWordData[] }[] = [];
     let current: { subjectId?: ThematicSubjectId; words: QuranWordData[] } | null = null;
 
-    for (const w of line.words || []) {
+    for (const w of filteredWords) {
       const sId = w.subjectId || line.subjectId;
       if (!current || current.subjectId !== sId) {
         current = { subjectId: sId, words: [w] };
@@ -84,7 +96,7 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
       }
     }
     return groups;
-  }, [line.words, line.subjectId, showThematicColors]);
+  }, [filteredWords, line.subjectId, showThematicColors]);
 
   // Check if the entire line belongs to a single subject
   const singleTheme = useMemo(() => {
@@ -93,11 +105,10 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
     return sId ? THEMATIC_SUBJECTS[sId] : null;
   }, [thematicGroups, showThematicColors]);
 
-  // Unified, harmonious typography across all lines on the page
-  // Fluid font size scaling gracefully from mobile to desktop
-  const uniformTypographyClass = 'text-[15px] xs:text-[16px] sm:text-[18px] md:text-[21px] lg:text-[23px] xl:text-[24px]';
+  // Responsive fluid typography: calibrated to match authentic printed Madani Mushaf
+  const uniformTypographyClass = 'text-[19px] xs:text-[21px] sm:text-[23px] md:text-[25px] lg:text-[27px]';
 
-  // Protective auto-fit: only scales in rare case of overflow on extremely narrow phones
+  // Responsive scaling to prevent any word wrap or horizontal scrolling
   const lineContainerRef = useRef<HTMLDivElement>(null);
   const wordsContainerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number>(1);
@@ -119,7 +130,7 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
     checkFit();
     window.addEventListener('resize', checkFit);
     return () => window.removeEventListener('resize', checkFit);
-  }, [line]);
+  }, [line, filteredWords]);
 
   return (
     <div
@@ -131,15 +142,15 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
             }
           : undefined
       }
-      className={`w-full max-w-full relative flex items-center overflow-hidden py-0.5 sm:py-0.75 px-1 sm:px-1.5 box-border rounded-[2px] transition-colors leading-[2.1] sm:leading-[2.3] md:leading-[2.4] ${
+      className={`w-full max-w-full relative flex items-center overflow-hidden py-0.5 sm:py-0.75 px-0.5 box-border rounded-[2px] transition-colors leading-[1.8] sm:leading-[1.9] ${
         singleTheme ? 'dark:bg-opacity-20' : ''
       }`}
     >
-      {/* Words container, strictly ordered from Right to Left */}
+      {/* Words container, strictly ordered from Right to Left with full-width flush justification */}
       <div
         ref={wordsContainerRef}
         className={`w-full flex items-center font-mushaf ${uniformTypographyClass} ${
-          isShortEndLine ? 'justify-center gap-x-3 sm:gap-x-5' : 'justify-between'
+          isShortEndLine ? 'justify-center gap-x-2 sm:gap-x-3' : 'justify-between'
         }`}
         style={
           scale < 1
@@ -152,48 +163,21 @@ export const QuranLine: React.FC<QuranLineProps> = React.memo(({
         }
         dir="rtl"
       >
-        {singleTheme || thematicGroups.length <= 1 ? (
-          // Standard full-width line: words spaced evenly and naturally
-          (line.words || []).map((word, idx) => (
+        {filteredWords.map((word, idx) => {
+          const theme =
+            showThematicColors && !singleTheme && (word.subjectId || line.subjectId)
+              ? THEMATIC_SUBJECTS[word.subjectId || line.subjectId!]
+              : null;
+          return (
             <QuranWord
               key={word.id || idx}
               word={word}
               onSelectWord={onSelectWord}
               isSelected={word.id === selectedWordId}
-              showTajweedColors={showTajweedColors}
+              themeBackground={theme?.colorLight}
             />
-          ))
-        ) : (
-          // Multi-theme transition line: Seamless background slices without gaps or pills
-          thematicGroups.map((group, gIdx) => {
-            const theme = group.subjectId ? THEMATIC_SUBJECTS[group.subjectId] : null;
-            return (
-              <div
-                key={gIdx}
-                style={
-                  theme && showThematicColors
-                    ? {
-                        backgroundColor: theme.colorLight,
-                      }
-                    : undefined
-                }
-                className={`inline-flex items-center justify-between flex-grow px-1 py-0.5 rounded-[2px] transition-colors ${
-                  theme ? 'dark:bg-opacity-20' : ''
-                }`}
-              >
-                {group.words.map((word, idx) => (
-                  <QuranWord
-                    key={word.id || idx}
-                    word={word}
-                    onSelectWord={onSelectWord}
-                    isSelected={word.id === selectedWordId}
-                    showTajweedColors={showTajweedColors}
-                  />
-                ))}
-              </div>
-            );
-          })
-        )}
+          );
+        })}
       </div>
 
       {/* Subtle line number on hover (desktop only) */}

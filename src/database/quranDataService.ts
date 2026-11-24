@@ -32,7 +32,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   fontSize: 'medium',
   keepScreenOn: false,
   showThematicColors: true,
-  showTajweedColors: true,
+  showTajweedColors: false, // Authentic solid black Quranic script without tajweed color noise
   showMarginalVocabulary: true,
 };
 
@@ -47,12 +47,50 @@ const getBasePath = (): string => {
   return base.endsWith('/') ? base : base + '/';
 };
 
+/**
+ * Sanitizes Quranic word text to eliminate font-rendering artifacts such as:
+ * 1. Spaces preceding non-spacing waqf marks (\u06D6-\u06DC) which trigger DirectWrite/HarfBuzz U+25CC dotted circle glyphs.
+ * 2. Redundant stacked tanween + small meem marks (\u06ED / \u06E2) on words like خالصةً and عدوٌ.
+ * 3. Literal U+25CC dotted circle placeholders.
+ */
+export function cleanQuranWordText(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\u25CC/g, '')
+    .replace(/[\s\u200C\u200D\uFEFF\u00A0]+([\u06D6-\u06DC])/g, '$1')
+    .replace(/([\u064B\u064C\u064D])[\u06ED\u06E2]/g, '$1')
+    .replace(/\u06ED/g, '')
+    .replace(/[\u06DF\u06E0]/g, '')
+    // Map U+06E3 (Small Low Seen) to U+06DC (Small High Seen) which has authentic GPOS glyph support in KFGQPC Hafs font
+    .replace(/\u06E3/g, '\u06DC')
+    .trim();
+}
+
 export class QuranDataService {
   /**
    * Determine Surah for a given Mushaf page number (1 to 604)
    */
   static getSurahForPage(pageNumber: number): Surah | null {
     if (pageNumber < 1 || pageNumber > 604) return null;
+    const cachedPage = pagesCache[pageNumber];
+    if (cachedPage && cachedPage.lines) {
+      // Check if page lines declare a surah title
+      for (const line of cachedPage.lines) {
+        if (line.isHeader && line.headerType === 'surah_title' && line.surahNumber) {
+          const found = SURAHS_DATA.find(s => s.number === line.surahNumber);
+          if (found) return found;
+        }
+      }
+      // Check first word's surah
+      for (const line of cachedPage.lines) {
+        for (const w of (line.words || [])) {
+          if (w.surah) {
+            const found = SURAHS_DATA.find(s => s.number === w.surah);
+            if (found) return found;
+          }
+        }
+      }
+    }
     return SURAHS_DATA.find((s) => pageNumber >= s.startPage && pageNumber <= s.endPage) || null;
   }
 
@@ -87,6 +125,20 @@ export class QuranDataService {
       const res = await fetch(`${getBasePath()}data/pages/page_${pStr}.json`);
       if (!res.ok) throw new Error(`Failed to load page ${clamped}`);
       const data: QuranPageData = await res.json();
+
+      // Normalize words to guarantee clean, authentic font rendering with zero dotted circles
+      if (data && data.lines) {
+        for (const line of data.lines) {
+          if (line.words) {
+            for (const word of line.words) {
+              if (word.text) {
+                word.text = cleanQuranWordText(word.text);
+              }
+            }
+          }
+        }
+      }
+
       pagesCache[clamped] = data;
       return data;
     } catch (e) {

@@ -104,7 +104,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans text-gray-900 dark:text-gray-100 transition-colors flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans text-gray-900 dark:text-gray-100 transition-colors flex flex-col w-full max-w-full overflow-x-hidden">
       {/* Desktop Header Navigation (md: screens and up) */}
       <DesktopNavbar
         activeTab={activeTab}

@@ -211,9 +211,9 @@ export const WordDetailsModal: React.FC<WordDetailsModalProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {/* Urdu Translation */}
-                <div className="flex items-center justify-between gap-2 bg-emerald-50/70 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40">
-                  <span className="text-sm sm:text-base font-bold text-emerald-950 dark:text-emerald-100 font-mushaf">
+                {/* Urdu Translation with authentic Jameel Noori Nastaleeq font */}
+                <div className="flex items-center justify-between gap-2 bg-emerald-50/70 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40" dir="rtl">
+                  <span className="text-base sm:text-lg font-normal text-emerald-950 dark:text-emerald-100 font-urdu leading-[2.2] text-right">
                     {translation?.urdu || '—'}
                   </span>
                   <span className="px-2 py-0.5 rounded-md bg-emerald-200/60 dark:bg-emerald-800/60 text-emerald-900 dark:text-emerald-200 text-[10px] font-bold shrink-0">

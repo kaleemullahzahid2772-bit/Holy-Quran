@@ -98,11 +98,12 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
-  const touchEndX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
 
-  const surah = QuranDataService.getSurahForPage(rightPageNumber);
+  const activePageForSurah = viewMode === 'dual' ? rightPageNumber : currentPage;
+  const surah = QuranDataService.getSurahForPage(activePageForSurah);
   const leftSurah = leftPageNumber ? QuranDataService.getSurahForPage(leftPageNumber) : null;
-  const juz = QuranDataService.getJuzForPage(rightPageNumber);
+  const juz = QuranDataService.getJuzForPage(activePageForSurah);
   const leftJuz = leftPageNumber ? QuranDataService.getJuzForPage(leftPageNumber) : null;
   const refImagePath = QuranDataService.getPageImagePath(currentPage);
 
@@ -276,21 +277,26 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
     setZoom(1);
   };
 
-  // Touch Swipe for mobile (RTL: swipe left moves to next page, swipe right moves to previous)
+  // Smooth touch swipe navigation for mobile (Arabic RTL book pagination: swipe right-to-left moves to next page, left-to-right moves to previous page)
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+    if (e.touches && e.touches[0]) {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX.current;
+    if (e.changedTouches && e.changedTouches[0]) {
+      const diffX = touchStartX.current - e.changedTouches[0].clientX;
+      const diffY = touchStartY.current - e.changedTouches[0].clientY;
 
-    // Minimum swipe threshold 50px
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        goToNextPage();
-      } else {
-        goToPrevPage();
+      // Minimum swipe threshold 45px and dominant horizontal axis to avoid interference with vertical scrolling
+      if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.35) {
+        if (diffX > 0) {
+          goToNextPage();
+        } else {
+          goToPrevPage();
+        }
       }
     }
   };
@@ -316,52 +322,52 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
     >
       {/* Top Header Controls (Collapsible in distraction-free mode) */}
       {!distractionFree && (
-        <header className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 border-b border-gray-200/80 dark:border-gray-800/80 backdrop-blur-md px-3 py-2 shadow-sm">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 border-b border-gray-200/80 dark:border-gray-800/80 backdrop-blur-md px-2 sm:px-3 py-1.5 sm:py-2 shadow-sm w-full max-w-full overflow-hidden">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-2">
             {/* Left: Surah & Juz Information */}
             <button
               onClick={() => setIsNavModalOpen(true)}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-right"
+              className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2.5 py-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-right shrink min-w-0"
             >
-              <Compass size={18} className="text-emerald-600 dark:text-emerald-400" />
-              <div>
-                <div className="font-bold font-quran text-gray-900 dark:text-gray-100 text-base leading-none">
+              <Compass size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <div className="min-w-0">
+                <div className="font-bold font-quran text-gray-900 dark:text-gray-100 text-sm sm:text-base leading-none truncate">
                   {surah ? surah.nameArabic : 'سرورق / فہرست'}
                 </div>
-                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-sans">
-                  {juz ? `پارہ ${juz.number}` : ''} • صفحہ {currentPage}
+                <div className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 font-sans truncate">
+                  {juz ? `پارہ ${juz.number}` : ''} • ص {currentPage}
                 </div>
               </div>
             </button>
 
             {/* Center: Quick Zoom & Distraction Free toggles */}
-            <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800/80 p-1 rounded-xl">
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-gray-100 dark:bg-gray-800/80 p-0.5 sm:p-1 rounded-xl shrink-0">
               <button
                 onClick={handleZoomIn}
-                className="p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 transition-colors"
+                className="p-1 sm:p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 transition-colors"
                 title="زوم بڑھائیں (Zoom In)"
               >
-                <ZoomIn size={16} />
+                <ZoomIn size={15} />
               </button>
               {zoom !== 1 && (
                 <button
                   onClick={handleResetZoom}
-                  className="px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-white dark:bg-gray-700 rounded transition-colors font-sans"
+                  className="px-1 py-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-300 bg-white dark:bg-gray-700 rounded transition-colors font-sans"
                 >
                   {Math.round(zoom * 100)}%
                 </button>
               )}
               <button
                 onClick={handleZoomOut}
-                className="p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 transition-colors"
+                className="p-1 sm:p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 transition-colors"
                 title="زوم کم کریں (Zoom Out)"
               >
-                <ZoomOut size={16} />
+                <ZoomOut size={15} />
               </button>
             </div>
 
-            {/* Right: Actions (View Mode, Sidebar, Reference PDF, Details, Tajweed, Bookmark, Fullscreen) */}
-            <div className="flex items-center gap-1">
+            {/* Right: Actions */}
+            <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
               {/* Desktop Two-Page Spread Mode Toggle (Book View) */}
               <button
                 onClick={toggleViewMode}
@@ -370,7 +376,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                     ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-gold-200 border border-emerald-300 dark:border-emerald-700 shadow-sm font-bold'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
-                title={viewMode === 'dual' ? 'ایک صفحہ پر سوئچ کریں (Switch to Single Page)' : 'دو صفحات کتابی منظر پر سوئچ کریں (Switch to Two-Page Book View)'}
+                title={viewMode === 'dual' ? 'ایک صفحہ پر سوئچ کریں' : 'دو صفحات کتابی منظر پر سوئچ کریں'}
               >
                 <BookOpen size={15} className="text-emerald-700 dark:text-gold-300" />
                 <span>{viewMode === 'dual' ? '۲ صفحات' : '۱ صفحہ'}</span>
@@ -389,67 +395,62 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                 <Compass size={18} />
               </button>
 
-              {/* Optional PDF Reference comparison toggle */}
+              {/* Optional PDF Reference comparison toggle (tablet/desktop only) */}
               <button
                 onClick={() => setShowPdfReference((prev) => !prev)}
-                className={`p-2 rounded-xl transition-colors ${
+                className={`hidden md:flex p-2 rounded-xl transition-colors ${
                   showPdfReference
                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
                     : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
-                title={showPdfReference ? 'ڈیجیٹل مصحف پر واپس آئیں' : 'ریفرنس پی ڈی ایف چیک کریں (Reference Scan)'}
+                title={showPdfReference ? 'ڈیجیٹل متن پر واپس آئیں' : 'ریفرنس پی ڈی ایف چیک کریں'}
               >
-                <FileText size={18} />
+                <FileText size={17} />
               </button>
 
               {/* Quran Universal Search */}
               {onOpenSearch && (
                 <button
                   onClick={onOpenSearch}
-                  className="p-2 text-amber-700 dark:text-gold-300 hover:bg-amber-50 dark:hover:bg-amber-950/50 rounded-xl transition-colors cursor-pointer"
-                  title="قرآنی تلاش (سورتیں، الفاظ، حروف، اعراب)"
+                  className="p-1.5 sm:p-2 text-amber-700 dark:text-gold-300 hover:bg-amber-50 dark:hover:bg-amber-950/50 rounded-xl transition-colors cursor-pointer"
+                  title="قرآنی تلاش"
                 >
-                  <Search size={18} />
+                  <Search size={16} />
                 </button>
               )}
 
+              {/* Page Analysis Details (Tablet/Desktop) */}
               <button
                 onClick={() => {
                   setDetailsPageNumber(currentPage);
                   setIsPageDetailsModalOpen(true);
                 }}
-                className="p-2 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-xl transition-colors"
-                title="صفحہ کی تفصیلات (اعراب، حروف، تجوید)"
+                className="hidden sm:flex p-2 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-xl transition-colors"
+                title="صفحہ کی تفصیلات"
               >
-                <BarChart2 size={18} />
+                <BarChart2 size={17} />
               </button>
 
-              <button
-                onClick={() => setIsTajweedModalOpen(true)}
-                className="p-2 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-xl transition-colors"
-                title="تجویدی کلر گائیڈ"
-              >
-                <Palette size={18} />
-              </button>
-
+              {/* Bookmark Toggle */}
               <button
                 onClick={handleToggleBookmark}
-                className={`p-2 rounded-xl transition-colors ${
+                className={`p-1.5 sm:p-2 rounded-xl transition-colors ${
                   isBookmarked
                     ? 'text-rose-600 bg-rose-50 dark:bg-rose-950/50'
                     : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
                 title={isBookmarked ? 'بک مارک ختم کریں' : 'بک مارک محفوظ کریں'}
               >
-                <BookmarkIcon size={18} fill={isBookmarked ? 'currentColor' : 'none'} />
+                <BookmarkIcon size={16} fill={isBookmarked ? 'currentColor' : 'none'} />
               </button>
 
+              {/* Fullscreen / Distraction Free */}
               <button
                 onClick={() => setDistractionFree(true)}
-                className="p-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 rounded-xl transition-colors"
-                title="پورا صفحہ دیکھیں (Distraction-free)"
+                className="p-1.5 sm:p-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 rounded-xl transition-colors"
+                title="پورا صفحہ دیکھیں"
               >
-                <Maximize2 size={18} />
+                <Maximize2 size={16} />
               </button>
             </div>
           </div>
@@ -459,7 +460,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
       {/* Main Quran Reading Canvas Area */}
       <main
         ref={containerRef}
-        className="flex-1 flex flex-col items-center justify-center p-2 sm:p-4 overflow-auto relative"
+        className="flex-1 flex flex-col items-center justify-center p-1 sm:p-3 md:p-4 overflow-x-hidden overflow-y-auto relative w-full max-w-full"
       >
         {/* Floating Distraction-Free Exit Button */}
         {distractionFree && (
@@ -532,11 +533,11 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
             viewMode === 'dual' && leftPageNumber && leftPageData?.isQuranText ? (
               /* Desktop Two-Page Book Spread (Right Page + Open Spine + Left Page) */
               <div
-                className="w-full flex flex-col lg:flex-row items-center lg:items-start justify-center gap-4 lg:gap-6"
+                className="w-full flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-4 lg:gap-6"
                 dir="rtl"
               >
                 {/* Right Page (Earlier Page in RTL, e.g. Page 2) */}
-                <div className="w-full lg:flex-1 max-w-[700px]">
+                <div className="w-full lg:flex-1 max-w-[500px] flex flex-col">
                   <QuranPage
                     pageData={pageData}
                     pageNumber={rightPageNumber}
@@ -564,7 +565,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
 
                 {/* Left Page (Next Page in RTL, e.g. Page 3) */}
                 {leftPageNumber && (
-                  <div className="w-full lg:flex-1 max-w-[700px]">
+                  <div className="w-full lg:flex-1 max-w-[500px] flex flex-col">
                     <QuranPage
                       pageData={leftPageData}
                       pageNumber={leftPageNumber}
@@ -646,39 +647,6 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
           )}
         </div>
       </main>
-
-      {/* Page Navigation Floating Arrows for Touch / Desktop */}
-      {!distractionFree && (
-        <div className="fixed top-1/2 -translate-y-1/2 left-2 right-2 sm:left-4 sm:right-4 z-20 pointer-events-none flex justify-between items-center">
-          {/* Next Page Button (Left in RTL is Next Page) */}
-          <button
-            onClick={goToNextPage}
-            disabled={currentPage >= 604}
-            className={`p-2.5 sm:p-3 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg pointer-events-auto border border-gray-200/80 dark:border-gray-700 transition-all hover:scale-105 active:scale-95 ${
-              currentPage >= 604
-                ? 'opacity-20 cursor-not-allowed'
-                : 'hover:bg-amber-50 dark:hover:bg-amber-950/60 text-amber-800 dark:text-gold-300'
-            }`}
-            title="اگلا صفحہ (Next Page)"
-          >
-            <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
-          </button>
-
-          {/* Previous Page Button (Right in RTL is Previous Page) */}
-          <button
-            onClick={goToPrevPage}
-            disabled={currentPage <= 1}
-            className={`p-2.5 sm:p-3 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg pointer-events-auto border border-gray-200/80 dark:border-gray-700 transition-all hover:scale-105 active:scale-95 ${
-              currentPage <= 1
-                ? 'opacity-20 cursor-not-allowed'
-                : 'hover:bg-amber-50 dark:hover:bg-amber-950/60 text-amber-800 dark:text-gold-300'
-            }`}
-            title="پچھلا صفحہ (Previous Page)"
-          >
-            <ChevronRight size={20} className="sm:w-6 sm:h-6" />
-          </button>
-        </div>
-      )}
 
       {/* Page Statistics Drawer */}
       {(showStatisticsSetting || showStatisticsPanel) && statistics && (
