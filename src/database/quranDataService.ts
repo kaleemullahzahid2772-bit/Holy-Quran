@@ -58,11 +58,6 @@ export function cleanQuranWordText(text: string): string {
   return text
     .replace(/\u25CC/g, '')
     .replace(/[\s\u200C\u200D\uFEFF\u00A0]+([\u06D6-\u06DC])/g, '$1')
-    .replace(/([\u064B\u064C\u064D])[\u06ED\u06E2]/g, '$1')
-    .replace(/\u06ED/g, '')
-    .replace(/[\u06DF\u06E0]/g, '')
-    // Map U+06E3 (Small Low Seen) to U+06DC (Small High Seen) which has authentic GPOS glyph support in KFGQPC Hafs font
-    .replace(/\u06E3/g, '\u06DC')
     .trim();
 }
 

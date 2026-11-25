@@ -146,7 +146,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   <div className="text-[9px] text-gray-400 font-sans">Fatha</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-mushaf font-bold text-emerald-600">َ</span>
+                  <span className="text-sm font-mushaf font-bold text-emerald-600">ـَ</span>
                   <span className="text-base font-extrabold text-emerald-800 dark:text-emerald-300 font-sans">
                     {countFatha.toLocaleString()}
                   </span>
@@ -162,7 +162,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   <div className="text-[9px] text-gray-400 font-sans">Kasra</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-mushaf font-bold text-emerald-600">ِ</span>
+                  <span className="text-sm font-mushaf font-bold text-emerald-600">ـِ</span>
                   <span className="text-base font-extrabold text-emerald-800 dark:text-emerald-300 font-sans">
                     {countKasra.toLocaleString()}
                   </span>
@@ -178,7 +178,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   <div className="text-[9px] text-gray-400 font-sans">Damma</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-mushaf font-bold text-emerald-600">ُ</span>
+                  <span className="text-sm font-mushaf font-bold text-emerald-600">ـُ</span>
                   <span className="text-base font-extrabold text-emerald-800 dark:text-emerald-300 font-sans">
                     {countDamma.toLocaleString()}
                   </span>
@@ -194,7 +194,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   <div className="text-[9px] text-gray-400 font-sans">Sukoon</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-mushaf font-bold text-gray-500">ْ</span>
+                  <span className="text-sm font-mushaf font-bold text-gray-500">ـْ</span>
                   <span className="text-base font-extrabold text-gray-900 dark:text-gray-100 font-sans">
                     {countSukoon.toLocaleString()}
                   </span>
@@ -210,7 +210,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   <div className="text-[9px] text-gray-400 font-sans">Shaddah</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-mushaf font-bold text-purple-600">ّ</span>
+                  <span className="text-sm font-mushaf font-bold text-purple-600">ـّ</span>
                   <span className="text-base font-extrabold text-purple-700 dark:text-purple-300 font-sans">
                     {countShaddah.toLocaleString()}
                   </span>
@@ -226,7 +226,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
                   <div className="text-[9px] text-gray-400 font-sans">Maddah</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-mushaf font-bold text-rose-600">~</span>
+                  <span className="text-sm font-mushaf font-bold text-rose-600">ـٓ</span>
                   <span className="text-base font-extrabold text-rose-700 dark:text-rose-300 font-sans">
                     {countMaddah.toLocaleString()}
                   </span>
@@ -245,7 +245,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {/* Do Zabar (Fathatan) */}
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
-                <div className="text-[10px] text-gray-500">دو زبر (ً)</div>
+                <div className="text-[10px] text-gray-500">دو زبر (ـً)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
                   {countFathatan}
                 </div>
@@ -253,7 +253,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
 
               {/* Do Zer (Kasratan) */}
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
-                <div className="text-[10px] text-gray-500">دو زیر (ٍ)</div>
+                <div className="text-[10px] text-gray-500">دو زیر (ـٍ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
                   {countKasratan}
                 </div>
@@ -261,7 +261,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
 
               {/* Do Pesh (Dammatan) */}
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
-                <div className="text-[10px] text-gray-500">دو پیش (ٌ)</div>
+                <div className="text-[10px] text-gray-500">دو پیش (ـٌ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
                   {countDammatan}
                 </div>
@@ -279,19 +279,19 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
             {/* Standing marks row */}
             <div className="grid grid-cols-3 gap-2.5 mt-2.5">
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
-                <div className="text-[10px] text-gray-500">کھڑی زبر (ٰ)</div>
+                <div className="text-[10px] text-gray-500">کھڑی زبر (ـٰ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
                   {countStandingFatha}
                 </div>
               </div>
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
-                <div className="text-[10px] text-gray-500">کھڑی زیر (ٖ)</div>
+                <div className="text-[10px] text-gray-500">کھڑی زیر (ـٖ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
                   {countStandingKasra}
                 </div>
               </div>
               <div className="p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-center">
-                <div className="text-[10px] text-gray-500">الٹا پیش (ٗ)</div>
+                <div className="text-[10px] text-gray-500">الٹا پیش (ـٗ)</div>
                 <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5 font-sans">
                   {countInvertedDamma}
                 </div>
@@ -310,7 +310,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 dark:bg-gray-800/80">
                 <div>
                   <span className="font-bold">حروفِ مستعلیہ (موٹے حروف):</span>
-                  <span className="text-[11px] text-gray-500 dark:text-gray-400 mr-1.5 font-mushaf">
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400 mr-1.5 font-arabic">
                     (خ، ص، ض، ط، ظ، غ، ق)
                   </span>
                 </div>
@@ -322,7 +322,7 @@ export const PageDetailsModal: React.FC<PageDetailsModalProps> = ({
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 dark:bg-gray-800/80">
                 <div>
                   <span className="font-bold">حروفِ قلقلہ (جھٹکے والے حروف):</span>
-                  <span className="text-[11px] text-gray-500 dark:text-gray-400 mr-1.5 font-mushaf">
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400 mr-1.5 font-arabic">
                     (ق، ط، ب، ج، د)
                   </span>
                 </div>

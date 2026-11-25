@@ -49,7 +49,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           title="فہرست و نیویگیشن سائیڈ بار کھولیں"
         >
           <ChevronLeft size={16} className="text-gold-300" />
-          <span className="text-[11px] font-bold tracking-widest [writing-mode:vertical-rl] font-quran py-1">
+          <span className="text-[11px] font-bold tracking-widest [writing-mode:vertical-rl] font-urdu py-1">
             فہرست سورتیں و پارے
           </span>
         </button>
@@ -65,7 +65,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         <div className="p-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <div className="flex items-center gap-2 text-emerald-800 dark:text-gold-200">
             <Compass size={18} />
-            <h3 className="font-bold text-sm font-quran">فہرست قرآنِ کریم</h3>
+            <h3 className="font-bold text-sm font-urdu">فہرست قرآنِ کریم</h3>
           </div>
           <button
             onClick={onToggle}

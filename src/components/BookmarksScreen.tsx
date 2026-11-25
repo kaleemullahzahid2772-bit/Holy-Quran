@@ -21,7 +21,7 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
       <div className="bg-gradient-to-r from-emerald-800 to-teal-900 text-white pt-8 pb-6 px-6 shadow-md">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold font-quran">محفوظ شدہ صفحات</h2>
+            <h2 className="text-2xl md:text-3xl font-bold font-urdu">محفوظ شدہ صفحات</h2>
             <p className="text-xs text-emerald-200 mt-0.5">Saved Bookmarks ({bookmarks.length})</p>
           </div>
           <div className="p-3 bg-white/10 rounded-2xl">

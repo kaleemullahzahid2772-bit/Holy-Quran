@@ -13,7 +13,7 @@ import {
   Languages
 } from 'lucide-react';
 import { QuranWordData, WordOccurrenceResult, WordOccurrenceInstance, WordTranslationResult } from '../types/quran';
-import { QuranDataService } from '../database/quranDataService';
+import { QuranDataService, cleanQuranWordText } from '../database/quranDataService';
 import { JUZ_DATA } from '../data/juzData';
 import { THEMATIC_SUBJECTS } from '../data/quranThematicData';
 
@@ -145,7 +145,7 @@ export const WordDetailsModal: React.FC<WordDetailsModalProps> = ({
         <div className="px-5 py-3.5 bg-gradient-to-b from-emerald-50/80 to-transparent dark:from-emerald-950/40 text-center border-b border-gray-100 dark:border-gray-800">
           {/* Big Arabic Word */}
           <div className="text-4xl sm:text-5xl font-bold font-mushaf text-emerald-950 dark:text-gold-200 tracking-wide my-1 py-0.5">
-            {word.text}
+            {cleanQuranWordText(word.text || '')}
           </div>
 
           {/* Clean Word & Total Count Highlight */}

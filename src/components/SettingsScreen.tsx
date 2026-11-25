@@ -26,7 +26,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       <div className="bg-gradient-to-r from-emerald-850 via-emerald-800 to-teal-900 text-white p-6 shadow-md">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold font-mushaf">سیٹنگز و ترتیبات</h1>
+            <h1 className="text-xl md:text-2xl font-bold font-urdu">سیٹنگز و ترتیبات</h1>
             <p className="text-xs text-emerald-200 mt-0.5">مصحف التفصيل الموضوعي • ترتیبات و اختیارات</p>
           </div>
           <div className="p-3 bg-white/10 rounded-2xl">
