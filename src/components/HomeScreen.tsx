@@ -8,17 +8,20 @@ import { QuranDataService } from '../database/quranDataService';
 interface HomeScreenProps {
   readingProgress: ReadingProgress;
   onOpenQuran: (page?: number) => void;
-  onOpenNavigation: (tab: 'surahs' | 'juz' | 'pages' | 'themes') => void;
+  onOpenNavigation: (tab?: 'surahs' | 'juz') => void;
+  onOpenThematicIndex: () => void;
   onOpenTajweedLegend: () => void;
   onOpenBookmarks?: () => void;
   onOpenQuranStatistics?: () => void;
   onOpenSearch?: () => void;
+  settings?: any;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   readingProgress,
   onOpenQuran,
   onOpenNavigation,
+  onOpenThematicIndex,
   onOpenTajweedLegend,
   onOpenBookmarks,
   onOpenQuranStatistics,
@@ -114,8 +117,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </section>
 
-        {/* Quick Access Action Grid (5 Feature Boxes) */}
-        <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 md:gap-4">
+        {/* Quick Access Action Grid (4 Feature Boxes) */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-4">
           {/* 1. Open Quran Reader */}
           <button
             onClick={() => onOpenQuran()}
@@ -128,7 +131,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">۱۵ سطری موضوعی مصحف</span>
           </button>
 
-          {/* 2. Browse Surahs */}
+          {/* 2. Unified Fihrist (Surahs & Paras) */}
           <button
             onClick={() => onOpenNavigation('surahs')}
             className="flex flex-col items-start p-4 bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700 hover:border-emerald-500 hover:shadow-md transition-all text-right group cursor-pointer"
@@ -136,13 +139,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div className="p-2.5 rounded-xl bg-gold-100 dark:bg-gold-900/50 text-gold-700 dark:text-gold-300 group-hover:scale-110 transition-transform mb-3">
               <Compass size={22} />
             </div>
-            <span className="font-bold text-gray-900 dark:text-gray-100 text-base">فہرستِ سورتیں</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">تمام ۱۱۴ سورتیں</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100 text-base">فہرست</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">سورتیں و پارے</span>
           </button>
 
-          {/* 3. Browse Thematic Topics */}
+          {/* 3. Browse Thematic Topics (Exclusively 7 Themes) */}
           <button
-            onClick={() => onOpenNavigation('themes')}
+            onClick={onOpenThematicIndex}
             className="flex flex-col items-start p-4 bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700 hover:border-emerald-500 hover:shadow-md transition-all text-right group cursor-pointer"
           >
             <div className="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 group-hover:scale-110 transition-transform mb-3">
@@ -152,22 +155,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">۷ قرآنی موضوعات</span>
           </button>
 
-          {/* 4. Browse Paras / Juz */}
-          <button
-            onClick={() => onOpenNavigation('juz')}
-            className="flex flex-col items-start p-4 bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700 hover:border-emerald-500 hover:shadow-md transition-all text-right group cursor-pointer"
-          >
-            <div className="p-2.5 rounded-xl bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300 group-hover:scale-110 transition-transform mb-3">
-              <Compass size={22} />
-            </div>
-            <span className="font-bold text-gray-900 dark:text-gray-100 text-base">فہرستِ پارے</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">تمام ۳۰ پارے</span>
-          </button>
-
-          {/* 5. Tajweed Rules */}
+          {/* 4. Tajweed Rules */}
           <button
             onClick={onOpenTajweedLegend}
-            className="flex flex-col items-start p-4 bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700 hover:border-emerald-500 hover:shadow-md transition-all text-right group cursor-pointer col-span-2 sm:col-span-1"
+            className="flex flex-col items-start p-4 bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700 hover:border-emerald-500 hover:shadow-md transition-all text-right group cursor-pointer"
           >
             <div className="p-2.5 rounded-xl bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 group-hover:scale-110 transition-transform mb-3">
               <Palette size={22} />

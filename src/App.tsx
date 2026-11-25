@@ -6,6 +6,7 @@ import { SettingsScreen } from './components/SettingsScreen';
 import { BottomNav } from './components/BottomNav';
 import { DesktopNavbar } from './components/DesktopNavbar';
 import { NavigationModal } from './components/NavigationModal';
+import { ThematicIndexModal } from './components/ThematicIndexModal';
 import { TajweedLegendModal } from './components/TajweedLegendModal';
 import { QuranStatsModal } from './components/QuranStatsModal';
 import { SearchModal } from './components/SearchModal';
@@ -38,7 +39,8 @@ export function App() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(QuranDataService.getBookmarks());
   
   const [isNavModalOpen, setIsNavModalOpen] = useState(false);
-  const [navInitialTab, setNavInitialTab] = useState<'surahs' | 'juz' | 'pages' | 'themes'>('surahs');
+  const [navInitialTab, setNavInitialTab] = useState<'surahs' | 'juz'>('surahs');
+  const [isThematicModalOpen, setIsThematicModalOpen] = useState(false);
   const [isTajweedModalOpen, setIsTajweedModalOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -86,7 +88,7 @@ export function App() {
   };
 
   // Open Navigation modal with specific tab
-  const handleOpenNavigation = (tab: 'surahs' | 'juz' | 'pages' | 'themes') => {
+  const handleOpenNavigation = (tab: 'surahs' | 'juz') => {
     setNavInitialTab(tab);
     setIsNavModalOpen(true);
   };
@@ -130,6 +132,7 @@ export function App() {
           readingProgress={readingProgress}
           onOpenQuran={handleOpenQuran}
           onOpenNavigation={handleOpenNavigation}
+          onOpenThematicIndex={() => setIsThematicModalOpen(true)}
           onOpenTajweedLegend={() => setIsTajweedModalOpen(true)}
           onOpenBookmarks={() => setActiveTab('bookmarks')}
           onOpenQuranStatistics={() => setIsStatsModalOpen(true)}
@@ -196,6 +199,15 @@ export function App() {
       <QuranStatsModal
         isOpen={isStatsModalOpen}
         onClose={() => setIsStatsModalOpen(false)}
+      />
+
+      {/* Dedicated Thematic Index Modal */}
+      <ThematicIndexModal
+        isOpen={isThematicModalOpen}
+        onClose={() => setIsThematicModalOpen(false)}
+        onSelectPage={(page) => {
+          handleOpenQuran(page);
+        }}
       />
 
       {/* Bottom Navigation (Always accessible unless distraction-free in Quran reader) */}
